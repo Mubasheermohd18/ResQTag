@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102b27">
+    <title>Vehicle Emergency Information | ResQTag</title>
+    <link rel="icon" href="../assets/svg/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <script>
+        if (!window.location.search.includes("standalone=true")) {
+            var hash = window.location.hash ? ("&" + window.location.hash.replace(/^#/, "")) : "";
+            var search = window.location.search ? ("&" + window.location.search.replace(/^\?/, "")) : "";
+            window.location.replace("index.html#report" + hash + search);
+        }
+    </script>
+    <style>
+        .report-container {
+            width: min(100% - 32px, 780px);
+            margin: 32px auto 56px;
+        }
+
+        .report-header {
+            padding: 28px 24px;
+            border-radius: 18px;
+            background: #102b27;
+            color: #fff;
+            text-align: center;
+        }
+
+        .report-header h1 {
+            margin: 0 0 10px;
+            font-size: clamp(1.7rem, 4vw, 2.3rem);
+        }
+
+        .report-header p {
+            margin: 0;
+            color: #dbeafe;
+            line-height: 1.7;
+        }
+
+        .report-alert {
+            margin-top: 18px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #fff7ed;
+            color: #9a3412;
+            line-height: 1.6;
+        }
+
+        .report-card {
+            margin-top: 22px;
+            padding: 24px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #fff;
+        }
+
+        .emergency-card-top {
+            border: 2px solid #fecaca;
+            background: linear-gradient(180deg, #fffbfb 0%, #ffffff 100%);
+            box-shadow: 0 4px 18px rgba(220, 38, 38, 0.08);
+        }
+
+        .emergency-badge-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .emergency-pill {
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 99px;
+            background: #fee2e2;
+            color: #b91c1c;
+            border: 1px solid #fca5a5;
+        }
+
+        .report-card h2 {
+            margin: 0 0 16px;
+            font-size: 1.25rem;
+        }
+
+        .report-details {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .report-detail {
+            min-width: 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .report-detail span {
+            display: block;
+            margin-bottom: 7px;
+            color: #64748b;
+            font-size: 0.84rem;
+        }
+
+        .report-detail strong {
+            overflow-wrap: anywhere;
+            color: #0f172a;
+        }
+
+        .report-detail a {
+            color: #176b5b;
+            overflow-wrap: anywhere;
+            font-weight: 600;
+        }
+
+        .report-vehicle-number {
+            grid-column: 1 / -1;
+            background: #eaf2ff;
+        }
+
+        .report-vehicle-number strong {
+            font-size: 1.35rem;
+            letter-spacing: 1px;
+        }
+
+        .report-contact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+            padding: 18px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .report-contact:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .report-contact-info {
+            min-width: 0;
+        }
+
+        .report-contact-info strong {
+            display: block;
+            overflow-wrap: anywhere;
+        }
+
+        .report-contact-info span {
+            display: block;
+            margin-top: 6px;
+            color: #64748b;
+            overflow-wrap: anywhere;
+        }
+
+        .report-contact-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .report-action {
+            display: inline-flex;
+            min-height: 42px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #d2ded8;
+            color: #172c27;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 180ms ease;
+            box-shadow: 0 1px 3px rgba(16, 43, 39, 0.04);
+        }
+
+        .report-action:hover {
+            background: #f2f7f4;
+            border-color: #176b5b;
+            color: #105447;
+            transform: translateY(-1px);
+        }
+
+        .report-action-primary {
+            background: #176b5b;
+            border-color: #176b5b;
+            color: #ffffff !important;
+            box-shadow: 0 4px 12px rgba(23, 107, 91, 0.2);
+        }
+
+        .report-action-primary:hover {
+            background: #105447;
+            border-color: #105447;
+            color: #ffffff !important;
+            box-shadow: 0 6px 16px rgba(23, 107, 91, 0.28);
+        }
+
+        .report-action-whatsapp {
+            background: #ffffff;
+            border-color: #86efac;
+            color: #15803d;
+        }
+
+        .report-action-whatsapp:hover {
+            background: #f0fdf4;
+            border-color: #22c55e;
+            color: #166534;
+            box-shadow: 0 3px 8px rgba(34, 197, 94, 0.15);
+        }
+
+        .report-action svg {
+            flex-shrink: 0;
+        }
+
+        .report-empty {
+            padding: 18px;
+            border-radius: 10px;
+            background: #f8fafc;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .report-footer {
+            margin-top: 24px;
+            color: #64748b;
+            font-size: 0.88rem;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        @media (max-width: 560px) {
+            .report-container {
+                width: min(100% - 20px, 780px);
+                margin-top: 16px;
+            }
+
+            .report-header,
+            .report-card {
+                padding: 20px 16px;
+            }
+
+            .report-details {
+                grid-template-columns: 1fr;
+            }
+
+            .report-vehicle-number {
+                grid-column: auto;
+            }
+
+            .report-contact {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .report-contact-actions {
+                width: 100%;
+            }
+
+            .report-contact-actions a {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container navbar">
+            <a href="index.html" class="brand">
+                <img src="../assets/svg/logo.svg" alt="ResQTag" width="38" height="38">
+                <span>ResQTag</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+            </nav>
+            <a class="button button-secondary nav-cta" href="qr-lookup.html">
+                Scan another
+            </a>
+        </div>
+    </header>
+
+    <main class="report-container">
+        <section class="report-header">
+            <h1>Vehicle Emergency Information</h1>
+            <p>This vehicle is registered with ResQTag. Use the information below to contact the owner or their emergency contacts if assistance is needed.</p>
+        </section>
+
+        <div id="reportMessage" aria-live="polite"></div>
+
+        <div id="reportContent" hidden>
+            <!-- 1. Primary Action: Emergency Contacts (ICE) -->
+            <section class="report-card emergency-card-top">
+                <div class="emergency-badge-header">
+                    <span class="emergency-pill">🚨 Priority Contacts (ICE)</span>
+                </div>
+                <h2>Emergency Contacts</h2>
+                <p id="contactCount" style="color: #64748b; margin-top: -8px; margin-bottom: 16px; font-size: 0.9rem;"></p>
+                <div id="emergencyContacts"></div>
+            </section>
+
+            <!-- 2. Vehicle Information -->
+            <section class="report-card">
+                <h2>Vehicle Identification</h2>
+                <div id="vehicleDetails" class="report-details"></div>
+            </section>
+
+            <!-- 3. Vehicle Owner -->
+            <section class="report-card">
+                <h2>Vehicle Owner Details</h2>
+                <div id="ownerDetails" class="report-details"></div>
+            </section>
+
+            <section class="report-card">
+                <h2>Need to Share Your Location?</h2>
+                <p>If you are helping at an incident, you can share your current location with the vehicle owner, provided your device supports location services.</p>
+                <button type="button" id="shareLocationBtn" class="report-action report-action-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    Share My Location
+                </button>
+                <p id="locationMessage" aria-live="polite"></p>
+            </section>
+        </div>
+
+        <footer class="report-footer">
+            ResQTag provides vehicle and emergency contact information. In a life-threatening emergency, contact the local emergency services.
+        </footer>
+    </main>
+
+    <script>
+        const reportMessage = document.getElementById("reportMessage");
+        const reportContent = document.getElementById("reportContent");
+        const vehicleDetails = document.getElementById("vehicleDetails");
+        const ownerDetails = document.getElementById("ownerDetails");
+        const emergencyContacts = document.getElementById("emergencyContacts");
+        const contactCount = document.getElementById("contactCount");
+        const locationMessage = document.getElementById("locationMessage");
+
+        let currentProfile = null;
+
+        function showReportError(message) {
+            reportMessage.replaceChildren();
+
+            const alert = document.createElement("div");
+            alert.className = "report-alert";
+            alert.setAttribute("role", "alert");
+            alert.textContent = message;
+
+            reportMessage.appendChild(alert);
+            reportContent.hidden = true;
+        }
+
+        function decodeProfileFromQr() {
+            const hash = window.location.hash.slice(1);
+            const params = new URLSearchParams(hash || window.location.search.slice(1));
+            const encoded = params.get("data");
+
+            if (encoded) {
+                try {
+                    const binary = atob(decodeURIComponent(encoded));
+                    const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+                    const profile = JSON.parse(new TextDecoder().decode(bytes));
+
+                    if (profile && typeof profile === "object" && profile.vehicleNumber) {
+                        return profile;
+                    }
+                } catch (e) {
+                    console.warn("Could not decode profile from URL hash:", e);
+                }
+            }
+
+            // Fallback for direct browser testing or demo view
+            try {
+                const stored = localStorage.getItem("resqtagVehicle");
+                if (stored) {
+                    const localProf = JSON.parse(stored);
+                    if (localProf && typeof localProf === "object" && localProf.vehicleNumber) {
+                        return localProf;
+                    }
+                }
+            } catch (e) {}
+
+            throw new Error("No vehicle information was found in this QR code. Please scan the QR code generated by ResQTag.");
+        }
+
+        function addDetail(container, label, value, options = {}) {
+            const card = document.createElement("div");
+            card.className = "report-detail";
+
+            if (options.highlight) {
+                card.classList.add("report-vehicle-number");
+            }
+
+            const heading = document.createElement("span");
+            heading.textContent = label;
+
+            const content = document.createElement("strong");
+            content.textContent = value || "Not provided";
+
+            if (options.phone && value) {
+                const link = document.createElement("a");
+                link.href = "tel:" + value.replace(/[^\d+]/g, "");
+                link.textContent = value;
+                content.replaceWith(link);
+
+                if (options.isOwnerContact) {
+                    const actions = document.createElement("div");
+                    actions.style.marginTop = "8px";
+                    actions.style.display = "flex";
+                    actions.style.gap = "8px";
+                    actions.style.flexWrap = "wrap";
+
+                    const callBtn = document.createElement("a");
+                    callBtn.className = "report-action report-action-primary";
+                    callBtn.style.minHeight = "34px";
+                    callBtn.style.padding = "6px 12px";
+                    callBtn.style.fontSize = "0.82rem";
+                    callBtn.href = "tel:" + value.replace(/[^\d+]/g, "");
+                    callBtn.innerHTML = '📞 Call Owner';
+                    actions.appendChild(callBtn);
+
+                    const digits = value.replace(/\D/g, "");
+                    if (digits.length >= 10 && digits.length <= 15) {
+                        const waBtn = document.createElement("a");
+                        waBtn.className = "report-action report-action-whatsapp";
+                        waBtn.style.minHeight = "34px";
+                        waBtn.style.padding = "6px 12px";
+                        waBtn.style.fontSize = "0.82rem";
+                        waBtn.href = "https://wa.me/" + digits;
+                        waBtn.target = "_self";
+                        waBtn.rel = "noopener noreferrer";
+                        waBtn.innerHTML = '💬 WhatsApp Owner';
+                        actions.appendChild(waBtn);
+                    }
+                    card.appendChild(actions);
+                }
+            }
+
+            card.prepend(heading);
+            container.appendChild(card);
+        }
+
+        function addContact(contact, index) {
+            const card = document.createElement("article");
+            card.className = "report-contact";
+
+            const info = document.createElement("div");
+            info.className = "report-contact-info";
+
+            const name = document.createElement("strong");
+            name.textContent = contact.name || "Emergency Contact " + (index + 1);
+
+            const phone = document.createElement("span");
+            phone.textContent = contact.phone;
+
+            info.append(name, phone);
+
+            const actions = document.createElement("div");
+            actions.className = "report-contact-actions";
+
+            const callLink = document.createElement("a");
+            callLink.className = "report-action report-action-primary";
+            callLink.href = "tel:" + contact.phone.replace(/[^\d+]/g, "");
+            callLink.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> Call Contact';
+
+            actions.appendChild(callLink);
+
+            const whatsappNumber = contact.phone.replace(/\D/g, "");
+
+            if (whatsappNumber.length >= 10 && whatsappNumber.length <= 15) {
+                const whatsappLink = document.createElement("a");
+                whatsappLink.className = "report-action report-action-whatsapp";
+                whatsappLink.href = "https://wa.me/" + whatsappNumber;
+                whatsappLink.target = "_self";
+                whatsappLink.rel = "noopener noreferrer";
+                whatsappLink.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> WhatsApp';
+                actions.appendChild(whatsappLink);
+            }
+
+            card.append(info, actions);
+            emergencyContacts.appendChild(card);
+        }
+
+        function renderProfile(profile) {
+            currentProfile = profile;
+
+            addDetail(vehicleDetails, "Registration Number", profile.vehicleNumber, { highlight: true });
+            addDetail(vehicleDetails, "Make and Model", profile.vehicleModel);
+            addDetail(vehicleDetails, "Vehicle Type", profile.vehicleType);
+            addDetail(vehicleDetails, "Vehicle Color", profile.vehicleColor);
+
+            addDetail(ownerDetails, "Owner's Name", profile.ownerName || "Vehicle Owner");
+            addDetail(ownerDetails, "Owner's Phone", profile.ownerPhone, { phone: true, isOwnerContact: true });
+
+            const contacts = Array.isArray(profile.contacts)
+                ? profile.contacts.filter(contact =>
+                    contact &&
+                    typeof contact === "object" &&
+                    typeof contact.phone === "string" &&
+                    contact.phone.trim() !== ""
+                )
+                : [];
+
+            contactCount.textContent = contacts.length
+                + " emergency contact" + (contacts.length === 1 ? "" : "s") + " registered";
+
+            if (contacts.length === 0) {
+                const empty = document.createElement("div");
+                empty.className = "report-empty";
+                empty.textContent = "No emergency contacts were included in this QR code. Please contact the vehicle owner directly.";
+                emergencyContacts.appendChild(empty);
+            } else {
+                contacts.forEach((contact, index) => addContact(contact, index));
+            }
+
+            reportMessage.replaceChildren();
+            reportContent.hidden = false;
+        }
+
+        document.getElementById("shareLocationBtn").addEventListener("click", () => {
+            if (!navigator.geolocation) {
+                locationMessage.textContent = "Location sharing is not supported by this browser.";
+                return;
+            }
+
+            locationMessage.textContent = "Requesting location permission...";
+
+            navigator.geolocation.getCurrentPosition(
+                position => {
+                    const latitude = position.coords.latitude;
+                    const longitude = position.coords.longitude;
+                    const mapUrl = "https://maps.google.com/?q=" + latitude + "," + longitude;
+                    const ownerPhone = currentProfile?.ownerPhone || "";
+                    const digits = ownerPhone.replace(/\D/g, "");
+                    const message = "I found your vehicle and may be able to help. My location: " + mapUrl;
+
+                    if (digits.length >= 10 && digits.length <= 15) {
+                        const whatsappUrl = "https://wa.me/" + digits + "?text=" + encodeURIComponent(message);
+                        window.location.href = whatsappUrl;
+                        locationMessage.textContent = "Your location message is ready to share with the owner.";
+                    } else {
+                        locationMessage.textContent = "Your location: " + mapUrl;
+                    }
+                },
+                () => {
+                    locationMessage.textContent = "Location could not be accessed. Check your browser permissions or share your location manually.";
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
+        });
+
+        try {
+            renderProfile(decodeProfileFromQr());
+        } catch (error) {
+            showReportError(error.message || "Unable to display vehicle information.");
+        }
+    </script>
+</body>
+</html>

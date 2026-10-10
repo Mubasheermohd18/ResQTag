@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102b27">
+    <title>Vehicle Dashboard | ResQTag</title>
+    <link rel="icon" href="../assets/svg/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <script>
+        if (!window.location.search.includes("standalone=true")) {
+            var hash = window.location.hash || "";
+            window.location.replace("index.html#dashboard" + (hash ? ("&" + hash.replace(/^#/, "")) : ""));
+        }
+    </script>
+</head>
+<body>
+    <header class="site-header">
+        <div class="container navbar">
+            <a href="index.html" class="brand">
+                <img src="../assets/svg/logo.svg" alt="ResQTag" width="38" height="38">
+                <span>ResQTag</span>
+            </a>
+            <nav class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html" aria-current="page">Dashboard</a>
+                <a href="printable-qr.html">My QR Code</a>
+                <a href="qr-lookup.html">Scan QR</a>
+            </nav>
+            <a class="button button-secondary nav-cta" href="printable-qr.html">
+                My QR Code
+            </a>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="page-heading">
+            <h1>Vehicle Dashboard</h1>
+            <p>Manage your vehicle information and emergency contacts in one place.</p>
+        </section>
+
+        <div data-message-container aria-live="polite"></div>
+
+        <div class="dashboard-layout">
+            <section class="dashboard-main">
+                <div class="dashboard-panel">
+                    <form id="vehicleForm">
+                        <div class="form-section">
+                            <h2>Owner Information</h2>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="ownerName">Owner's Full Name *</label>
+                                    <input type="text" id="ownerName" name="ownerName" autocomplete="name" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="ownerPhone">Owner's Phone Number *</label>
+                                    <input type="tel" id="ownerPhone" name="ownerPhone" autocomplete="tel" inputmode="tel" placeholder="10-digit mobile or international number" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h2>Vehicle Information</h2>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label for="vehicleNumber">Registration Number *</label>
+                                    <input type="text" id="vehicleNumber" name="vehicleNumber" placeholder="e.g. TS 09 AB 1234" required>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vehicleModel">Vehicle Make and Model</label>
+                                    <input type="text" id="vehicleModel" name="vehicleModel" placeholder="e.g. Maruti Suzuki WagonR">
+                                </div>
+                                <div class="form-field">
+                                    <label for="vehicleType">Vehicle Type</label>
+                                    <select id="vehicleType" name="vehicleType">
+                                        <option value="">Select vehicle type</option>
+                                        <option value="Car">Car</option>
+                                        <option value="Motorcycle">Motorcycle</option>
+                                        <option value="Scooter">Scooter</option>
+                                        <option value="Auto Rickshaw">Auto Rickshaw</option>
+                                        <option value="Commercial Vehicle">Commercial Vehicle</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-field">
+                                    <label for="vehicleColor">Vehicle Color</label>
+                                    <input type="text" id="vehicleColor" name="vehicleColor" placeholder="e.g. White">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-section">
+                            <h2>Emergency Contacts</h2>
+                            <p>Add as many emergency contacts as you need. Enter a name and phone number for each contact.</p>
+
+                            <div id="contactsContainer"></div>
+
+                            <button type="button" id="addContactBtn" class="button button-secondary">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                Add Emergency Contact
+                            </button>
+
+                            <p id="contactsMessage" aria-live="polite"></p>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="button button-primary">Save Vehicle Details</button>
+                            <button type="button" id="resetFormBtn" class="button button-secondary">Reset Form</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <aside class="dashboard-sidebar">
+                <div class="dashboard-panel">
+                    <h2>Your ResQTag</h2>
+                    <div class="profile-status">
+                        <span class="status-dot"></span>
+                        <span id="profileStatus">Checking saved profile...</span>
+                    </div>
+                    <p>Save your information first, then generate your QR code for printing.</p>
+                    <div class="dashboard-actions">
+                        <a href="printable-qr.html" class="button button-primary">Generate My QR Code</a>
+                        <a href="qr-lookup.html" class="button button-secondary">Scan a QR Code</a>
+                    </div>
+                </div>
+
+                <div class="dashboard-panel">
+                    <h2>How It Works</h2>
+                    <p class="dashboard-help">1. Enter your vehicle and owner details.</p>
+                    <p class="dashboard-help">2. Add your emergency contacts.</p>
+                    <p class="dashboard-help">3. Save your information and generate your QR code.</p>
+                    <p class="dashboard-help">4. Print the code and place it where it can be found in an emergency.</p>
+                </div>
+
+                <div class="dashboard-panel">
+                    <h2>Privacy Notice</h2>
+                    <p>Your profile is stored in this browser. The current QR system encodes your details in the QR code, so anyone who scans it may be able to read them. Only add contact details with the contacts' permission.</p>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; <span data-current-year></span> ResQTag. Emergency information made accessible.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase Cloud Firestore SDKs & Config -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../assets/js/firebase-config.js"></script>
+    <script src="../assets/js/storage.js"></script>
+    <script src="../assets/js/main.js"></script>
+
+    <script>
+        const vehicleForm = document.getElementById("vehicleForm");
+        const contactsContainer = document.getElementById("contactsContainer");
+        const addContactBtn = document.getElementById("addContactBtn");
+        const contactsMessage = document.getElementById("contactsMessage");
+        const profileStatus = document.getElementById("profileStatus");
+        const resetFormBtn = document.getElementById("resetFormBtn");
+
+        function addContact(name = "", phone = "") {
+            const card = document.createElement("div");
+            card.className = "contact-card";
+
+            const heading = document.createElement("h3");
+            heading.className = "contact-card-heading";
+
+            const nameLabel = document.createElement("label");
+            nameLabel.textContent = "Contact Name";
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.name = "contactName";
+            nameInput.autocomplete = "name";
+            nameInput.placeholder = "Enter full name";
+            nameInput.value = name;
+
+            const phoneLabel = document.createElement("label");
+            phoneLabel.textContent = "Phone Number";
+            const phoneInput = document.createElement("input");
+            phoneInput.type = "tel";
+            phoneInput.name = "contactPhone";
+            phoneInput.autocomplete = "tel";
+            phoneInput.inputMode = "tel";
+            phoneInput.placeholder = "Enter phone number";
+            phoneInput.value = phone;
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "button button-secondary remove-contact-btn";
+            removeButton.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove contact';
+            removeButton.addEventListener("click", () => {
+                card.remove();
+                renumberContacts();
+            });
+
+            card.append(
+                heading,
+                nameLabel,
+                nameInput,
+                phoneLabel,
+                phoneInput,
+                removeButton
+            );
+
+            contactsContainer.appendChild(card);
+            renumberContacts();
+        }
+
+        function renumberContacts() {
+            const cards = contactsContainer.querySelectorAll(".contact-card");
+
+            cards.forEach((card, index) => {
+                card.querySelector(".contact-card-heading").textContent =
+                    "Emergency Contact " + (index + 1);
+            });
+
+            contactsMessage.textContent =
+                cards.length + " emergency contact" +
+                (cards.length === 1 ? "" : "s") + " added.";
+        }
+
+        function readContacts() {
+            const cards = contactsContainer.querySelectorAll(".contact-card");
+            const contacts = [];
+
+            for (const card of cards) {
+                const name = card.querySelector('[name="contactName"]').value.trim();
+                const phone = card.querySelector('[name="contactPhone"]').value.trim();
+
+                if (!name && !phone) {
+                    continue;
+                }
+
+                if (!name || !phone) {
+                    throw new Error("Complete both fields for every contact you add.");
+                }
+
+                if (!isValidPhoneNumber(phone)) {
+                    throw new Error("Enter a valid phone number for " + name + ".");
+                }
+
+                contacts.push({ name, phone });
+            }
+
+            return contacts;
+        }
+
+        function loadProfileIntoForm() {
+            const profile = getVehicleProfile();
+            contactsContainer.replaceChildren();
+            addContact();
+
+            if (!profile) {
+                profileStatus.textContent = "No profile saved yet";
+                return;
+            }
+
+            profileStatus.textContent = "Active profile: " + (profile.vehicleNumber || "").toUpperCase();
+        }
+
+        addContactBtn.addEventListener("click", () => {
+            addContact();
+        });
+
+        vehicleForm.addEventListener("submit", event => {
+            event.preventDefault();
+
+            try {
+                const regInput = document.getElementById("vehicleNumber");
+                const vehicleNumber = (regInput ? regInput.value : "").trim().toUpperCase();
+                if (!vehicleNumber) {
+                    throw new Error("Enter a valid vehicle registration number.");
+                }
+
+                const ownerPhone = document.getElementById("ownerPhone").value.trim();
+
+                if (!isValidPhoneNumber(ownerPhone)) {
+                    throw new Error("Enter a valid owner phone number.");
+                }
+
+                const profile = {
+                    ownerName: document.getElementById("ownerName").value.trim() || "Vehicle Owner",
+                    ownerPhone,
+                    vehicleNumber,
+                    vehicleModel: document.getElementById("vehicleModel").value.trim(),
+                    vehicleType: document.getElementById("vehicleType").value,
+                    vehicleColor: document.getElementById("vehicleColor").value.trim(),
+                    contacts: readContacts()
+                };
+
+                saveVehicleProfile(profile);
+
+                // Clear fields
+                vehicleForm.reset();
+                contactsContainer.replaceChildren();
+                addContact();
+                clearMessage();
+
+                // Redirect to QR
+                window.location.href = "printable-qr.html";
+            } catch (error) {
+                showMessage(error.message || "Unable to save your profile.", "error");
+            }
+        });
+
+        // Pressing enter submits
+        vehicleForm.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && e.target.tagName !== "BUTTON" && e.target.tagName !== "TEXTAREA") {
+                e.preventDefault();
+                if (typeof vehicleForm.requestSubmit === "function") {
+                    vehicleForm.requestSubmit();
+                } else {
+                    vehicleForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+                }
+            }
+        });
+
+        resetFormBtn.addEventListener("click", () => {
+            if (!window.confirm("Clear the form?")) {
+                return;
+            }
+
+            vehicleForm.reset();
+            contactsContainer.replaceChildren();
+            addContact();
+            clearMessage();
+            profileStatus.textContent = hasVehicleProfile()
+                ? "Saved profile remains in system"
+                : "No profile saved yet";
+        });
+
+        loadProfileIntoForm();
+    </script>
+</body>
+</html>

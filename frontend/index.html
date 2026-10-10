@@ -1,0 +1,3441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102b27">
+    <meta name="description" content="ResQTag - Vehicle Emergency Access System. Single-tab unified application for vehicle registration, printable standee QR generation, QR scanning, and emergency assistance.">
+    <title>ResQTag | Vehicle Emergency Access</title>
+
+    <link rel="icon" href="../assets/svg/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <link rel="stylesheet" href="../assets/css/single-tab-app.css">
+</head>
+
+<body>
+    <!-- ====================================================================
+         UNIFIED SINGLE-TAB HEADER & MODULE NAVIGATION
+         ==================================================================== -->
+    <header class="site-header">
+        <nav class="navbar container" aria-label="Main application navigation">
+            <a class="brand" href="#home" onclick="switchModule('home'); return false;" aria-label="ResQTag Home">
+                <img src="../assets/svg/logo.svg" alt="ResQTag" width="38" height="38">
+                <span>ResQTag</span>
+            </a>
+
+            <!-- Single Tab Nav Switcher (Clean, focused flow for vehicle owners) -->
+            <div class="nav-links app-module-nav" role="tablist" aria-label="Application Modules">
+                <button type="button" class="module-tab-btn is-active" data-tab="home" onclick="switchModule('home')" role="tab" aria-selected="true">
+                    <span class="tab-icon">🏠</span>
+                    <span class="tab-label">Home</span>
+                </button>
+                <button type="button" class="module-tab-btn" data-tab="dashboard" onclick="switchModule('dashboard')" role="tab" aria-selected="false">
+                    <span class="tab-icon">🚗</span>
+                    <span class="tab-label">Dashboard</span>
+                </button>
+                <button type="button" class="module-tab-btn" data-tab="printable-qr" onclick="switchModule('printable-qr')" role="tab" aria-selected="false">
+                    <span class="tab-icon">🖨️</span>
+                    <span class="tab-label">My QR Code</span>
+                </button>
+                <button type="button" class="module-tab-btn" data-tab="qr-lookup" onclick="switchModule('qr-lookup')" role="tab" aria-selected="false">
+                    <span class="tab-icon">📷</span>
+                    <span class="tab-label">Scan QR</span>
+                </button>
+                <button type="button" class="module-tab-btn" id="navAdminTab" data-tab="admin" onclick="switchModule('admin')" role="tab" aria-selected="false" style="display: none;">
+                    <span class="tab-icon">👑</span>
+                    <span class="tab-label">Developer Admin</span>
+                </button>
+            </div>
+
+            <!-- User Authentication / Profile Widget -->
+            <div class="auth-nav-container">
+                <div id="navUserLoggedOut" style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" class="auth-signin-btn" onclick="openAuthModal('signin')">
+                        <span>👤</span>
+                        <span>Sign In / Register</span>
+                    </button>
+                </div>
+                <div id="navUserLoggedIn" class="user-menu-wrapper" style="display: none;">
+                    <button type="button" id="userMenuToggleBtn" class="user-profile-pill" onclick="toggleUserDropdown(event)" aria-haspopup="true" aria-expanded="false">
+                        <span class="user-pill-avatar" id="navUserAvatar">U</span>
+                        <span class="user-pill-name" id="navUserName">User</span>
+                        <span class="user-pill-chevron">▼</span>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu" role="menu">
+                        <div class="user-dropdown-header">
+                            <div class="user-dropdown-header-name" id="menuDropdownName">User Name</div>
+                            <div class="user-dropdown-header-email" id="menuDropdownEmail">user@email.com</div>
+                            <span class="user-role-badge badge-user" id="menuDropdownRoleBadge">Vehicle Owner</span>
+                        </div>
+                        <button type="button" class="user-dropdown-item" onclick="switchModule('dashboard'); closeUserDropdown();">
+                            <span>🚗</span>
+                            <span>Vehicle Dashboard</span>
+                        </button>
+                        <button type="button" class="user-dropdown-item" onclick="switchModule('printable-qr'); closeUserDropdown();">
+                            <span>🖨️</span>
+                            <span>My ResQTag QR</span>
+                        </button>
+                        <div id="menuDevAdminItem" style="display: none;">
+                            <button type="button" class="user-dropdown-item" onclick="switchModule('admin'); closeUserDropdown();" style="color: #b45309; font-weight: 700;">
+                                <span>👑</span>
+                                <span>Developer Console</span>
+                            </button>
+                        </div>
+                        <button type="button" class="user-dropdown-item item-logout" onclick="handleUserSignOut()">
+                            <span>🚪</span>
+                            <span>Sign Out</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="button button-primary nav-cta" id="globalNavCta" onclick="switchModule('printable-qr')">
+                Get QR Code
+            </button>
+        </nav>
+    </header>
+
+    <main id="appMain">
+        <!-- ================================================================
+             MODULE 1: HOME LANDING PAGE (#view-home)
+             ================================================================ -->
+        <section id="view-home" class="app-module-view is-active" aria-label="Home page">
+            <section class="hero container">
+                <div class="hero-content">
+                    <span class="eyebrow">VEHICLE EMERGENCY ACCESS</span>
+
+                    <h1>
+                        When seconds matter,<br>
+                        <span>make contact simple.</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        ResQTag connects a vehicle's QR code to essential emergency
+                        contact information, helping bystanders reach the right
+                        people immediately when an incident occurs.
+                    </p>
+
+                    <div class="hero-actions">
+                        <button type="button" class="button button-primary" onclick="switchModule('dashboard')">
+                            Create your ResQTag
+                        </button>
+
+                        <button type="button" class="button button-secondary" onclick="switchModule('printable-qr')">
+                            Preview QR Standee
+                        </button>
+
+                        <button type="button" class="button button-secondary" onclick="switchModule('qr-lookup')">
+                            📷 Scan a tag
+                        </button>
+                    </div>
+
+                    <div class="hero-note">
+                        <span class="status-dot"></span>
+                        No app installation required to scan a tag
+                    </div>
+                </div>
+
+                <div class="hero-visual" aria-label="ResQTag emergency QR concept">
+                    <div class="visual-card" style="cursor: pointer;" onclick="switchModule('printable-qr')">
+                        <div class="visual-card-header">
+                            <div class="mini-brand">
+                                <img src="../assets/svg/logo.svg" alt="" width="27" height="27">
+                                <span>ResQTag</span>
+                            </div>
+                            <span class="tag-label">VEHICLE TAG</span>
+                        </div>
+
+                        <div class="qr-placeholder" aria-hidden="true">
+                            <svg viewBox="0 0 180 180" role="img">
+                                <rect width="180" height="180" rx="8" fill="#ffffff"/>
+                                <g fill="#102b27">
+                                    <path d="M12 12h48v48H12z M20 20v32h32V20z M28 28h16v16H28z"/>
+                                    <path d="M120 12h48v48h-48z M128 20v32h32V20z M136 28h16v16h-16z"/>
+                                    <path d="M12 120h48v48H12z M20 128v32h32v-32z M28 136h16v16H28z"/>
+                                    <path d="M72 12h12v12H72z M96 12h12v24H96z M72 36h24v12H72z"/>
+                                    <path d="M72 60h12v12H72z M96 48h12v24H96z M120 72h12v12h-12z"/>
+                                    <path d="M144 72h12v24h-12z M168 72h-12v12h12z M120 96h24v12h-24z"/>
+                                    <path d="M72 84h12v24H72z M96 84h24v12H96z M84 108h24v12H84z"/>
+                                    <path d="M120 120h12v12h-12z M144 108h24v12h-24z M156 132h12v24h-12z"/>
+                                    <path d="M72 132h12v12H72z M96 144h24v12H96z M120 156h24v12h-24z"/>
+                                    <path d="M72 156h12v12H72z M84 72h12v12H84z M132 144h12v12h-12z"/>
+                                </g>
+                                <rect x="70" y="70" width="40" height="40" rx="8" fill="#ffffff" stroke="#ffffff" stroke-width="5"/>
+                                <path d="M90 78l13 5v10c0 9-6 15-13 19-7-4-13-10-13-19V83z" fill="#176b5b"/>
+                                <path d="M84 93l4 4 8-9" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+
+                        <div class="visual-caption">
+                            <strong>Scan for emergency contacts</strong>
+                            <span>Vehicle safety information</span>
+                        </div>
+
+                        <div class="visual-footer">
+                            <span class="footer-icon">✓</span>
+                            Quick access when it matters
+                        </div>
+                    </div>
+
+                    <div class="floating-note">
+                        <span class="floating-icon">+</span>
+                        <div>
+                            <strong>Emergency ready</strong>
+                            <span>Contacts within reach</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="trust-strip">
+                <div class="container trust-content">
+                    <div>
+                        <strong>One QR code</strong>
+                        <span>Attached to your vehicle</span>
+                    </div>
+                    <div>
+                        <strong>Simple access</strong>
+                        <span>Scan with a phone camera</span>
+                    </div>
+                    <div>
+                        <strong>Faster contact</strong>
+                        <span>Reach listed emergency contacts</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="section container" id="how-it-works">
+                <div class="section-heading">
+                    <span class="eyebrow">HOW IT WORKS</span>
+                    <h2>Three steps. One clear purpose.</h2>
+                    <p>
+                        ResQTag makes it easier for someone at the scene of an
+                        incident to find the right contact information.
+                    </p>
+                </div>
+
+                <div class="steps-grid">
+                    <article class="step-card" onclick="switchModule('dashboard')" style="cursor: pointer;">
+                        <div class="step-number">01</div>
+                        <div class="step-icon" aria-hidden="true">▤</div>
+                        <h3>Register your vehicle</h3>
+                        <p>
+                            Add your vehicle details, owner information and
+                            emergency contact numbers.
+                        </p>
+                    </article>
+
+                    <article class="step-card" onclick="switchModule('printable-qr')" style="cursor: pointer;">
+                        <div class="step-number">02</div>
+                        <div class="step-icon" aria-hidden="true">▦</div>
+                        <h3>Generate your QR code</h3>
+                        <p>
+                            Create a standee card that can be printed and placed
+                            on your windshield or dashboard.
+                        </p>
+                    </article>
+
+                    <article class="step-card" onclick="switchModule('qr-lookup')" style="cursor: pointer;">
+                        <div class="step-number">03</div>
+                        <div class="step-icon" aria-hidden="true">☎</div>
+                        <h3>Reach the right people</h3>
+                        <p>
+                            A bystander scans the code to view the available
+                            emergency details and call immediately.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="feature-section" id="why-resqtag">
+                <div class="container feature-layout">
+                    <div class="feature-copy">
+                        <span class="eyebrow">BUILT FOR REAL SITUATIONS</span>
+                        <h2>Useful information, without the extra steps.</h2>
+                        <p>
+                            After an accident, bystanders may not know whom to
+                            contact. ResQTag gives them a straightforward way to
+                            access the emergency contacts provided by the vehicle owner.
+                        </p>
+
+                        <ul class="feature-list">
+                            <li><span class="check">✓</span> Vehicle details available from the QR code</li>
+                            <li><span class="check">✓</span> Direct 1-tap calling options for listed contacts</li>
+                            <li><span class="check">✓</span> Printable standee card for your windshield</li>
+                            <li><span class="check">✓</span> Works natively in any mobile camera or browser</li>
+                        </ul>
+
+                        <button type="button" class="button button-primary" onclick="switchModule('dashboard')">
+                            Set up your vehicle
+                        </button>
+                    </div>
+
+                    <div class="feature-panel" onclick="switchModule('report')" style="cursor: pointer;">
+                        <div class="feature-panel-top">
+                            <span class="panel-indicator"></span>
+                            EMERGENCY PROFILE PREVIEW
+                        </div>
+
+                        <div class="profile-symbol" aria-hidden="true">R</div>
+                        <h3>Vehicle information</h3>
+                        <p class="muted">A sample of the information a QR scan displays.</p>
+
+                        <div class="profile-row">
+                            <span>Vehicle</span>
+                            <strong>TS 09 AB 1234</strong>
+                        </div>
+                        <div class="profile-row">
+                            <span>Owner</span>
+                            <strong>John Doe (+91 98765 43210)</strong>
+                        </div>
+                        <div class="profile-row">
+                            <span>Emergency contacts</span>
+                            <strong>Jane Doe (Spouse)</strong>
+                        </div>
+
+                        <div class="profile-disclaimer">
+                            Click to view full interactive emergency report.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="closing-cta container">
+                <div>
+                    <span class="eyebrow">GET STARTED</span>
+                    <h2>Give your vehicle a ResQTag.</h2>
+                    <p>
+                        Set up your vehicle profile and prepare a QR code for
+                        your emergency contacts.
+                    </p>
+                </div>
+                <button type="button" class="button button-light" onclick="switchModule('dashboard')">
+                    Create your tag →
+                </button>
+            </section>
+        </section>
+
+        <!-- ================================================================
+             MODULE 2: VEHICLE DASHBOARD (#view-dashboard)
+             ================================================================ -->
+        <section id="view-dashboard" class="app-module-view" aria-label="Vehicle Dashboard">
+            <main class="container" style="padding-top: 32px; padding-bottom: 50px;">
+                <section class="page-heading">
+                    <span class="eyebrow">VEHICLE PROFILE MANAGEMENT</span>
+                    <h1>Vehicle Dashboard</h1>
+                    <p>Manage your vehicle information and emergency contacts in one place.</p>
+                </section>
+
+                <div data-message-container aria-live="polite"></div>
+
+                <div class="dashboard-layout">
+                    <section class="dashboard-main">
+                        <div id="activeProfileBannerContainer"></div>
+                        <form id="vehicleForm" novalidate>
+                            <div class="form-section">
+                                <h2>Vehicle Information</h2>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="vehicleNumber">Registration Number</label>
+                                        <input
+                                            type="text"
+                                            id="vehicleNumber"
+                                            name="vehicleNumber"
+                                            placeholder="e.g. MH 02 AB 1234"
+                                            autocomplete="off"
+                                            required
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="vehicleModel">Model</label>
+                                        <input
+                                            type="text"
+                                            id="vehicleModel"
+                                            name="vehicleModel"
+                                            placeholder="e.g. Hyundai i20"
+                                            autocomplete="off"
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="vehicleType">Type</label>
+                                        <select id="vehicleType" name="vehicleType">
+                                            <option value="">Select type</option>
+                                            <option value="Car">Car</option>
+                                            <option value="Motorcycle">Motorcycle</option>
+                                            <option value="Scooter">Scooter</option>
+                                            <option value="Truck">Truck</option>
+                                            <option value="Van">Van</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="vehicleColor">Color</label>
+                                        <input
+                                            type="text"
+                                            id="vehicleColor"
+                                            name="vehicleColor"
+                                            placeholder="e.g. White"
+                                            autocomplete="off"
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2>Owner Details</h2>
+
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="ownerName">Owner Name</label>
+                                        <input
+                                            type="text"
+                                            id="ownerName"
+                                            name="ownerName"
+                                            placeholder="Enter full name"
+                                            autocomplete="name"
+                                            required
+                                        >
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="ownerPhone">Owner Phone</label>
+                                        <input
+                                            type="tel"
+                                            id="ownerPhone"
+                                            name="ownerPhone"
+                                            placeholder="Enter phone number"
+                                            autocomplete="tel"
+                                            inputmode="tel"
+                                            required
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-section">
+                                <h2>Emergency Contacts</h2>
+                                <p class="form-hint">
+                                    Add the people who should be contacted in an emergency.
+                                </p>
+
+                                <div id="contactsContainer"></div>
+
+                                <div class="contacts-actions">
+                                    <button
+                                        type="button"
+                                        id="addContactBtn"
+                                        class="button button-secondary"
+                                    >
+                                        + Add emergency contact
+                                    </button>
+                                    <span id="contactsMessage" class="contacts-count"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-buttons">
+                                <button type="submit" class="button button-primary" id="saveAndGenerateQrBtn">
+                                    Save & Generate QR Code →
+                                </button>
+                                <button type="button" id="resetFormBtn" class="button button-secondary">
+                                    Clear Form
+                                </button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <aside class="dashboard-sidebar">
+                        <div class="dashboard-panel">
+                            <h2>Your ResQTag</h2>
+                            <div class="profile-status">
+                                <span class="status-dot"></span>
+                                <span id="profileStatus">Checking saved profile...</span>
+                            </div>
+                            <p>Save your information first, then generate your QR code for printing.</p>
+                            <div class="dashboard-actions">
+                                <button type="button" onclick="switchModule('printable-qr')" class="button button-primary" style="width: 100%; justify-content: center;">
+                                    Generate My QR Code
+                                </button>
+                                <button type="button" onclick="switchModule('qr-lookup')" class="button button-secondary" style="width: 100%; justify-content: center; margin-top: 8px;">
+                                    Scan a QR Code
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-panel">
+                            <h2>How It Works</h2>
+                            <p class="dashboard-help">1. Enter your vehicle and owner details.</p>
+                            <p class="dashboard-help">2. Add your emergency contacts.</p>
+                            <p class="dashboard-help">3. Save your information and generate your QR code.</p>
+                            <p class="dashboard-help">4. Print the code and place it where it can be found in an emergency.</p>
+                        </div>
+
+                        <div class="dashboard-panel">
+                            <h2>Privacy Notice</h2>
+                            <p>Your profile is stored locally in this browser. The QR system encodes your details directly, so anyone who scans it can reach your emergency contacts immediately.</p>
+                        </div>
+                    </aside>
+                </div>
+            </main>
+        </section>
+
+        <!-- ================================================================
+             MODULE 3: PRINTABLE QR STANDEE GENERATOR (#view-printable-qr)
+             ================================================================ -->
+        <section id="view-printable-qr" class="app-module-view" aria-label="Printable QR Code">
+            <main class="qr-page">
+                <section class="qr-heading">
+                    <span class="eyebrow">VEHICLE EMERGENCY TAG</span>
+                    <h1>Download &amp; Print Your ResQTag</h1>
+                    <p>
+                        Your vehicle emergency standee is styled for maximum visibility and compatibility.
+                        Choose a color theme, select your preferred format, and download as a high-resolution JPG or printable PDF.
+                    </p>
+                </section>
+
+                <div id="emptyState" class="qr-panel" style="text-align: center; padding: 48px 24px;" hidden>
+                    <div style="font-size: 3rem; margin-bottom: 12px;">🚗</div>
+                    <h2>No Vehicle Profile Found</h2>
+                    <p style="max-width: 480px; margin: 0 auto 24px; color: #556863;">
+                        To generate your emergency QR standee card, please enter your vehicle details and emergency contacts first.
+                    </p>
+                    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                        <button type="button" class="button button-primary" onclick="switchModule('dashboard')">
+                            Go to Vehicle Dashboard
+                        </button>
+                        <button type="button" id="loadSampleBtn" class="button button-secondary">
+                            Load Demo Vehicle (TS 09 AB 1234)
+                        </button>
+                    </div>
+                </div>
+
+                <div id="readyState" class="qr-layout">
+                    <!-- LEFT COLUMN: Settings & Download Controls -->
+                    <div class="qr-panel">
+                        <!-- Profile Summary Pill -->
+                        <div class="vehicle-badge-card">
+                            <div class="vehicle-badge-info">
+                                <h4 id="badgeVehicleNumber">TS 09 AB 1234</h4>
+                                <p id="badgeVehicleDetails">White Maruti Suzuki WagonR</p>
+                            </div>
+                            <button type="button" onclick="switchModule('dashboard')" class="button button-secondary" style="padding: 6px 12px; font-size: 0.8rem; min-height: 32px;">
+                                Edit
+                            </button>
+                        </div>
+
+                        <!-- 1. Color Themes -->
+                        <div class="option-group-title">1. Select Card Theme</div>
+                        <div class="theme-options">
+                            <button type="button" class="theme-btn is-active" id="themeEmeraldBtn">
+                                <span class="theme-dot emerald"></span>
+                                <span>Emerald</span>
+                            </button>
+                            <button type="button" class="theme-btn" id="themePurpleBtn">
+                                <span class="theme-dot purple"></span>
+                                <span>Violet</span>
+                            </button>
+                            <button type="button" class="theme-btn" id="themeAmberBtn">
+                                <span class="theme-dot amber"></span>
+                                <span>Amber</span>
+                            </button>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 2. QR Code Format -->
+                        <div class="option-group-title">2. Choose QR Scanning Format</div>
+                        <div class="format-cards">
+                            <label class="format-card is-active" id="formatCardWeb">
+                                <input type="radio" name="qrFormat" id="radioWeb" value="web" checked>
+                                <div class="format-card-body">
+                                    <strong>
+                                        <span>Emergency Web Portal</span>
+                                        <span class="format-badge" style="background: #176b5b; color: #fff;">Recommended</span>
+                                    </strong>
+                                    <p>Opens the interactive ResQTag website emergency interface with contacts, 1-tap direct calling, and incident assistance.</p>
+                                    <div class="web-url-box" id="webUrlBox" style="display: block; margin-top: 8px;">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                                            <label for="customWebBase" style="font-size: 0.78rem; color: #475569; font-weight: 600;">Scan Destination Web Link:</label>
+                                            <span style="background: #e8f4ef; color: #176b5b; border: 1px solid #c9e3d8; border-radius: 999px; font-size: 0.72rem; padding: 2px 8px; font-weight: 600;">🌐 Live Public Tunnel Active</span>
+                                        </div>
+                                        <input type="text" id="customWebBase" placeholder="https://infrared-kinda-candidate-rec.trycloudflare.com/frontend/index.html#report" style="width: 100%; padding: 8px 10px; border-radius: 6px; border: 1px solid #cbd5e1; font-size: 0.82rem; margin-top: 4px;">
+                                        <span style="font-size: 0.74rem; color: #475569; display: block; margin-top: 4px;">✅ <strong>Publicly Accessible:</strong> Works on all smartphones over 4G/5G mobile data and any Wi-Fi.</span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="format-card" id="formatCardText">
+                                <input type="radio" name="qrFormat" id="radioText" value="text">
+                                <div class="format-card-body">
+                                    <strong>
+                                        <span>Instant Emergency Card</span>
+                                        <span class="format-badge" style="background: #475569;">Offline Raw Text</span>
+                                    </strong>
+                                    <p>Encodes vehicle &amp; contacts in raw text note (no website interface).</p>
+                                </div>
+                            </label>
+
+                            <label class="format-card" id="formatCardVcard">
+                                <input type="radio" name="qrFormat" id="radioVcard" value="vcard">
+                                <div class="format-card-body">
+                                    <strong>
+                                        <span>vCard Contact Card</span>
+                                        <span class="format-badge" style="background: #475569;">Phone Contact</span>
+                                    </strong>
+                                    <p>Prompts the smartphone to save emergency contact directly into phone address book.</p>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 3. Information Toggles -->
+                        <div class="option-group-title">3. Card Details to Show</div>
+                        <div class="tag-toggles">
+                            <label class="toggle-item">
+                                <span>Show Emergency Contacts (ICE)</span>
+                                <input type="checkbox" id="toggleContacts" checked>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Show Owner Phone</span>
+                                <input type="checkbox" id="togglePhone" checked>
+                            </label>
+                            <label class="toggle-item">
+                                <span>Show Vehicle Model &amp; Color</span>
+                                <input type="checkbox" id="toggleModel" checked>
+                            </label>
+                        </div>
+
+                        <div class="section-divider"></div>
+
+                        <!-- 4. Action Buttons -->
+                        <div class="download-actions-grid">
+                            <button type="button" id="downloadJpgBtn" class="btn-download-primary">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Download Standee (JPG)
+                            </button>
+                            <button type="button" id="downloadPdfBtn" class="button button-secondary btn-download-secondary">
+                                📄 Printable PDF
+                            </button>
+                            <button type="button" id="printButton" class="button button-secondary btn-download-secondary">
+                                🖨️ Print Direct
+                            </button>
+                            <button type="button" id="downloadPngBtn" class="button button-secondary btn-download-secondary" style="grid-column: 1 / -1;">
+                                🖼️ High-Res PNG Layout
+                            </button>
+                        </div>
+
+                        <p class="qr-status-text" id="printableQrStatus"></p>
+                    </div>
+
+                    <!-- RIGHT COLUMN: The Standee Card Preview -->
+                    <div class="qr-panel" style="padding: 20px;">
+                        <div class="preview-header-bar">
+                            <span class="preview-badge">Live Standee Preview</span>
+                            <span style="font-size: 0.8rem; color: #5a6e69;">Ready for Windshield / Visor</span>
+                        </div>
+
+                        <div class="sheet-container">
+                            <!-- THE STANDEE CARD -->
+                            <article class="tag-standee theme-emerald" id="tagStandee">
+                                <!-- Top Banner -->
+                                <header class="standee-top-banner">
+                                    <div class="standee-brand-row">
+                                        <img src="../assets/svg/logo.svg" alt="" class="standee-logo-img" width="34" height="34">
+                                        <span class="standee-brand-title">ResQTag</span>
+                                        <span class="standee-tag-badge">EMERGENCY</span>
+                                    </div>
+                                    <p class="standee-header-sub">VEHICLE SAFETY &amp; RESCUE SYSTEM</p>
+                                </header>
+
+                                <!-- Purpose prompt -->
+                                <div class="standee-sub-prompt">
+                                    SCAN FOR EMERGENCY CONTACT &amp; OWNER
+                                </div>
+
+                                <!-- Central White QR Card with Corner Brackets -->
+                                <div class="standee-qr-card">
+                                    <span class="corner-bracket tl"></span>
+                                    <span class="corner-bracket tr"></span>
+                                    <span class="corner-bracket bl"></span>
+                                    <span class="corner-bracket br"></span>
+
+                                    <div class="standee-qr-wrap" id="qrContainer"></div>
+
+                                    <div class="standee-qr-caption">
+                                        <span>📷</span>
+                                        <span>Scan with any camera or Google Lens</span>
+                                    </div>
+                                </div>
+
+                                <!-- Vehicle Identity Section -->
+                                <div class="standee-identity-section">
+                                    <!-- Number Plate -->
+                                    <div class="standee-plate">
+                                        <div class="plate-ind-strip">
+                                            <span class="plate-ind-flag">🇮🇳</span>
+                                            <span class="plate-ind-code">IND</span>
+                                        </div>
+                                        <span class="plate-number-text" id="tagVehicleNumber">TS 09 AB 1234</span>
+                                    </div>
+
+                                    <div class="standee-model-text" id="tagVehicleModelText">White Maruti Suzuki WagonR</div>
+
+                                    <div class="standee-pills-row">
+                                        <span class="standee-contact-pill" id="tagPhoneBadge">📞 Owner: +91 98765 43210</span>
+                                        <span class="standee-contact-pill ice" id="tagEmergencyBadge">🚨 ICE: Jane Doe (+91 98765 01234)</span>
+                                    </div>
+                                </div>
+
+                                <!-- Compatible App Badges -->
+                                <div class="standee-compat-box">
+                                    <div class="compat-title">WORKS WITH ANY CAMERA • NO APP NEEDED</div>
+                                    <div class="compat-badges-row">
+                                        <span class="compat-badge">🔍 Google Lens</span>
+                                        <span class="compat-badge">🍏 iPhone Camera</span>
+                                        <span class="compat-badge">🤖 Android Camera</span>
+                                        <span class="compat-badge">💬 WhatsApp</span>
+                                    </div>
+                                    <p class="compat-subtext">Point phone camera at QR to view emergency info instantly</p>
+                                </div>
+
+                                <!-- Footer cut guide -->
+                                <footer class="standee-footer">
+                                    <div class="standee-cut-text">✂ Cut along outer border and place on vehicle windshield or dashboard</div>
+                                    <div class="standee-watermark">RESQTAG VEHICLE EMERGENCY SYSTEM • RESQTAG.APP</div>
+                                </footer>
+                            </article>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </section>
+
+        <!-- ================================================================
+             MODULE 4: QR SCANNER / LOOKUP (#view-qr-lookup)
+             ================================================================ -->
+        <section id="view-qr-lookup" class="app-module-view" aria-label="Scan QR Code">
+            <main class="lookup-page">
+                <section class="lookup-heading">
+                    <span class="eyebrow">QR CODE SCANNER</span>
+                    <h1>Scan a ResQTag</h1>
+                    <p>
+                        Point your camera at a vehicle's ResQTag QR code or upload
+                        an image from your device to view the emergency details.
+                    </p>
+                </section>
+
+                <div class="lookup-layout">
+                    <section class="lookup-panel">
+                        <h2>Camera Scanner</h2>
+                        <p>Allow camera access to scan a tag directly.</p>
+
+                        <div class="camera-box">
+                            <div id="reader"></div>
+                            <div class="camera-placeholder" id="cameraPlaceholder">
+                                <div class="camera-icon">📷</div>
+                                <p>Camera is currently idle.</p>
+                            </div>
+                        </div>
+
+                        <div class="lookup-actions">
+                            <button type="button" id="startScan" class="button button-primary">
+                                Start camera
+                            </button>
+                            <button type="button" id="stopScan" class="button button-secondary" disabled>
+                                Stop camera
+                            </button>
+                        </div>
+
+                        <div class="upload-area">
+                            <label for="qrImage">Or upload a QR code image</label>
+                            <input type="file" id="qrImage" accept="image/*">
+                        </div>
+
+                        <div id="scanStatus" class="lookup-status" aria-live="polite"></div>
+
+                        <div class="privacy-note">
+                            <strong>Note:</strong> Scanning occurs locally in this browser.
+                            No images are uploaded to external servers.
+                        </div>
+                    </section>
+
+                    <aside class="lookup-panel">
+                        <h2>How Scanning Works</h2>
+                        <p>In an emergency, quick contact can make all the difference.</p>
+
+                        <div class="lookup-steps">
+                            <div class="lookup-step">
+                                <div class="lookup-step-number">1</div>
+                                <div>
+                                    <strong>Locate the tag</strong>
+                                    <p>Find the ResQTag on the vehicle's windshield or window.</p>
+                                </div>
+                            </div>
+
+                            <div class="lookup-step">
+                                <div class="lookup-step-number">2</div>
+                                <div>
+                                    <strong>Scan the code</strong>
+                                    <p>Use your camera or the scanner on this page.</p>
+                                </div>
+                            </div>
+
+                            <div class="lookup-step">
+                                <div class="lookup-step-number">3</div>
+                                <div>
+                                    <strong>Access contacts</strong>
+                                    <p>View emergency contacts and call them immediately.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 24px; padding-top: 18px; border-top: 1px solid #e1e7e5;">
+                            <button type="button" onclick="switchModule('dashboard')" class="button button-secondary" style="width: 100%; justify-content: center;">
+                                Register Your Own Vehicle
+                            </button>
+                        </div>
+                    </aside>
+                </div>
+            </main>
+        </section>
+
+        <!-- ================================================================
+             MODULE 5: EMERGENCY INCIDENT REPORT (#view-report)
+             ================================================================ -->
+        <section id="view-report" class="app-module-view" aria-label="Emergency Report">
+            <main class="report-container">
+                <section class="report-header">
+                    <h1>Vehicle Emergency Information</h1>
+                    <p>This vehicle is registered with ResQTag. Use the information below to contact the owner or their emergency contacts if assistance is needed.</p>
+                </section>
+
+                <div id="reportMessage" aria-live="polite"></div>
+
+                <div id="reportContent">
+                    <!-- 1. Primary Action: Emergency Contacts (ICE) -->
+                    <section class="report-card emergency-card-top">
+                        <div class="emergency-badge-header">
+                            <span class="emergency-pill">🚨 Priority Contacts (ICE)</span>
+                        </div>
+                        <h2>Emergency Contacts</h2>
+                        <p id="contactCount" style="color: #64748b; margin-top: -8px; margin-bottom: 16px; font-size: 0.9rem;"></p>
+                        <div id="emergencyContacts"></div>
+                    </section>
+
+                    <!-- 2. Vehicle Information -->
+                    <section class="report-card">
+                        <h2>Vehicle Identification</h2>
+                        <div id="vehicleDetails" class="report-details"></div>
+                    </section>
+
+                    <!-- 3. Vehicle Owner -->
+                    <section class="report-card">
+                        <h2>Vehicle Owner Details</h2>
+                        <div id="ownerDetails" class="report-details"></div>
+                    </section>
+
+                    <!-- 4. Location Sharing -->
+                    <section class="report-card">
+                        <h2>Need to Share Your Location?</h2>
+                        <p>If you are helping at an incident, you can share your current location with the vehicle owner, provided your device supports location services.</p>
+                        <button type="button" id="shareLocationBtn" class="report-action report-action-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                            Share My Location
+                        </button>
+                        <p id="locationMessage" aria-live="polite" style="margin-top: 10px; font-size: 0.88rem; color: #176b5b;"></p>
+                    </section>
+
+                    <div style="display: flex; gap: 12px; margin-top: 20px; justify-content: center; flex-wrap: wrap;">
+                        <button type="button" onclick="switchModule('qr-lookup')" class="button button-secondary">
+                            📷 Scan Another Tag
+                        </button>
+                        <button type="button" onclick="switchModule('dashboard')" class="button button-secondary">
+                            🚗 Edit Vehicle Profile
+                        </button>
+                    </div>
+                </div>
+
+                <footer class="report-footer">
+                    ResQTag provides vehicle and emergency contact information. In a life-threatening emergency, contact the local emergency services (112 / 100).
+                </footer>
+            </main>
+        </section>
+
+        <!-- ================================================================
+             MODULE 6: ADMIN OVERVIEW (#view-admin)
+             ================================================================ -->
+        <section id="view-admin" class="app-module-view" aria-label="Admin Dashboard">
+            <!-- 0. Barrier for regular vehicle owner accounts (Admin is strictly for the developer) -->
+            <div id="adminRegularUserBlocked" class="dev-barrier-container" style="display: none;">
+                <div class="dev-barrier-icon">🛡️</div>
+                <h2 class="dev-barrier-title">Developer Access Only</h2>
+                <p class="dev-barrier-text">
+                    The Administrative Console is reserved exclusively for the developer of ResQTag ("only me ie the one who developed it").
+                    Regular user accounts can register and manage their vehicles directly from their Dashboard.
+                </p>
+                <div class="dev-barrier-actions">
+                    <button type="button" class="button button-primary" onclick="switchModule('dashboard')">
+                        🚗 Go to Vehicle Dashboard
+                    </button>
+                    <button type="button" class="button button-secondary" onclick="switchModule('home')">
+                        🏠 Return Home
+                    </button>
+                </div>
+            </div>
+
+            <!-- 1. Admin Authentication Gate (Restricted Access) -->
+            <div id="adminAuthGate" class="admin-auth-gate">
+                <div class="auth-gate-card">
+                    <div class="auth-gate-shield">
+                        <span>🔒</span>
+                    </div>
+                    <span class="auth-gate-pill">DEVELOPER ACCESS ONLY</span>
+                    <h2>Developer Authentication</h2>
+                    <p>
+                        This administrative console is restricted exclusively to the developer of ResQTag.
+                        Enter your developer credentials or master passcode to access the user directory and system registry.
+                    </p>
+
+                    <form id="adminLoginForm" class="auth-gate-form" novalidate>
+                        <div class="form-group">
+                            <label for="adminPasscodeInput">Developer Passcode or Password</label>
+                            <div class="passcode-input-wrap">
+                                <input
+                                    type="password"
+                                    id="adminPasscodeInput"
+                                    placeholder="Enter passcode (e.g. admin123)"
+                                    autocomplete="current-password"
+                                    required
+                                >
+                                <button type="button" id="togglePasscodeBtn" class="passcode-toggle-btn" aria-label="Toggle passcode visibility">👁️</button>
+                            </div>
+                        </div>
+
+                        <div id="adminAuthError" class="auth-gate-error" style="display: none;"></div>
+
+                        <div class="auth-gate-actions">
+                            <button type="submit" class="button button-primary" style="justify-content: center;">
+                                🔓 Unlock Developer Console
+                            </button>
+                            <button type="button" class="button button-secondary" onclick="switchModule('home')" style="justify-content: center;">
+                                ← Home
+                            </button>
+                        </div>
+                    </form>
+
+                    <div class="auth-gate-hint">
+                        <span>🔑 Developer Passcode: <code>admin123</code> or <code>developer123</code></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Authorized Developer Admin Workspace -->
+            <div id="adminAuthorizedView" style="display: none;">
+                <main class="admin-page">
+                    <section class="admin-heading">
+                        <div>
+                            <span class="eyebrow" style="color: #b45309; font-weight: 800;">DEVELOPER SUPER CONSOLE</span>
+                            <h1>ResQTag Master Administration</h1>
+                            <p>
+                                Inspect registered users, vehicle profiles, and cloud synchronization status.
+                            </p>
+                        </div>
+
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <span class="admin-badge-dev-only">
+                                👑 Developer Master Access
+                            </span>
+                            <button type="button" class="button button-secondary" onclick="lockAdminConsole()" style="padding: 7px 14px; font-size: 0.82rem; font-weight: 700;">
+                                🔒 Lock & Exit
+                            </button>
+                        </div>
+                    </section>
+
+                <div class="admin-layout">
+                    <aside class="admin-sidebar">
+                        <p class="admin-sidebar-title">DEVELOPER CONSOLE</p>
+
+                        <nav class="admin-nav" aria-label="Admin navigation">
+                            <button type="button" class="active" onclick="switchModule('admin')">Overview</button>
+                            <button type="button" onclick="switchModule('dashboard')">Register Vehicle</button>
+                            <button type="button" onclick="switchModule('printable-qr')">QR Generator</button>
+                            <button type="button" onclick="switchModule('qr-lookup')">QR Scanner</button>
+                            <button type="button" onclick="switchModule('report')">Emergency Report</button>
+                        </nav>
+
+                        <div class="admin-sidebar-note">
+                            Master console with full administrative privileges across all registered accounts.
+                        </div>
+                    </aside>
+
+                    <div class="admin-main">
+                        <section class="stats-grid" aria-label="Local statistics">
+                            <article class="stat-card">
+                                <span class="stat-label">Registered users</span>
+                                <strong class="stat-value" id="adminTotalUsers">0</strong>
+                                <span class="stat-description">Accounts in ResQTag system</span>
+                            </article>
+
+                            <article class="stat-card">
+                                <span class="stat-label">Saved vehicle profiles</span>
+                                <strong class="stat-value" id="adminTotalVehicles">0</strong>
+                                <span class="stat-description">Vehicles stored in system</span>
+                            </article>
+
+                            <article class="stat-card">
+                                <span class="stat-label">Emergency contacts</span>
+                                <strong class="stat-value" id="adminTotalContacts">0</strong>
+                                <span class="stat-description">Contacts configured across tags</span>
+                            </article>
+
+                            <article class="stat-card">
+                                <span class="stat-label">Cloud Database</span>
+                                <strong class="stat-value" id="adminDatabaseStatus" style="font-size: 1.12rem; color: #176b5b;">Local Mode</strong>
+                                <span class="stat-description" id="adminDatabaseDesc">Firebase Firestore sync ready</span>
+                            </article>
+                        </section>
+
+                        <!-- Registered Users Directory (Developer Admin Inspection) -->
+                        <section class="admin-panel" id="userRecordsPanel" style="margin-bottom: 28px;">
+                            <div class="panel-heading">
+                                <div>
+                                    <h2>Registered User Accounts</h2>
+                                    <p>All vehicle owners who created accounts on ResQTag.</p>
+                                </div>
+                                <span class="demo-badge" style="background: #e0f2fe; color: #0369a1; border-color: #bae6fd;">
+                                    👥 User Directory
+                                </span>
+                            </div>
+
+                            <div class="table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>User Name</th>
+                                            <th>Email Address</th>
+                                            <th>Phone Number</th>
+                                            <th>Role</th>
+                                            <th>Joined Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminUsersTableBody">
+                                        <tr>
+                                            <td colspan="6" class="empty-table">Loading user directory...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+
+                        <section class="admin-panel" id="vehicleRecords">
+                            <div class="panel-heading">
+                                <div>
+                                    <h2>Vehicle Registry Records</h2>
+                                    <p>Profile data currently stored across all accounts.</p>
+                                </div>
+
+                                <button type="button" class="button button-primary" onclick="switchModule('dashboard')">
+                                    Add vehicle details
+                                </button>
+                            </div>
+
+                            <div class="table-tools">
+                                <input
+                                    type="search"
+                                    id="adminSearchInput"
+                                    placeholder="Search vehicle or owner"
+                                    aria-label="Search vehicle records"
+                                >
+
+                                <select id="adminVehicleFilter" aria-label="Filter records">
+                                    <option value="all">All records</option>
+                                    <option value="complete">Profile complete</option>
+                                    <option value="incomplete">Profile incomplete</option>
+                                </select>
+                            </div>
+
+                            <div class="table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Vehicle</th>
+                                            <th>Owner</th>
+                                            <th>Emergency contacts</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="adminRecordsTableBody">
+                                        <tr>
+                                            <td colspan="5" class="empty-table">Loading records...</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </main>
+            </div> <!-- /adminAuthorizedView -->
+        </section>
+    </main>
+
+    <!-- ====================================================================
+         USER AUTHENTICATION MODAL (Sign In & Account Registration)
+         ==================================================================== -->
+    <div id="authModalOverlay" class="auth-modal-overlay" aria-modal="true" role="dialog" aria-hidden="true" onclick="handleAuthModalBackdropClick(event)">
+        <div class="auth-modal-card" onclick="event.stopPropagation()">
+            <button type="button" class="auth-modal-close-btn" onclick="closeAuthModal()" aria-label="Close modal">✕</button>
+
+            <div class="auth-modal-header">
+                <div class="auth-modal-logo">
+                    <img src="../assets/svg/logo.svg" alt="" width="32" height="32">
+                    <span>ResQTag</span>
+                </div>
+                <h2 class="auth-modal-title" id="authModalTitle">Welcome to ResQTag</h2>
+                <p class="auth-modal-subtitle" id="authModalSubtitle">Sign in or create an account to manage your vehicle tags</p>
+            </div>
+
+            <!-- Segmented Control Tabs -->
+            <div class="auth-segmented-tabs" role="tablist">
+                <button type="button" class="auth-tab-btn is-active" id="tabBtnSignIn" onclick="setAuthTab('signin')" role="tab" aria-selected="true">
+                    Sign In
+                </button>
+                <button type="button" class="auth-tab-btn" id="tabBtnSignUp" onclick="setAuthTab('signup')" role="tab" aria-selected="false">
+                    Create Account
+                </button>
+            </div>
+
+            <div id="authAlertError" class="auth-error-banner" role="alert"></div>
+            <div id="authAlertSuccess" class="auth-success-banner" role="status"></div>
+
+            <!-- 1. SIGN IN FORM -->
+            <form id="authSignInForm" class="auth-form" onsubmit="handleAuthSignInSubmit(event)">
+                <div class="auth-input-group">
+                    <label for="signInIdentifier">Email or Phone Number *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">📧</span>
+                        <input type="text" id="signInIdentifier" class="auth-input-field" placeholder="name@email.com or 10-digit mobile" autocomplete="username" required>
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="signInPassword">Password *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">🔒</span>
+                        <input type="password" id="signInPassword" class="auth-input-field" placeholder="Enter your password" autocomplete="current-password" required>
+                        <button type="button" class="auth-password-toggle" onclick="togglePasswordVisibility('signInPassword', this)">👁️</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; font-size: 0.82rem;">
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; color: #475569;">
+                        <input type="checkbox" id="signInRememberMe" checked>
+                        <span>Keep me signed in</span>
+                    </label>
+                    <button type="button" onclick="setAuthTab('developer')" style="color: #92400e; font-weight: 700; background: none; border: none; cursor: pointer; font-size: inherit;">
+                        👑 Developer Sign In
+                    </button>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="signInSubmitBtn">
+                    Sign In to ResQTag
+                </button>
+
+                <div class="auth-footer-help">
+                    Don't have an account yet? <button type="button" onclick="setAuthTab('signup')">Create one here</button>
+                </div>
+            </form>
+
+            <!-- 2. CREATE ACCOUNT (SIGN UP) FORM -->
+            <form id="authSignUpForm" class="auth-form" style="display: none;" onsubmit="handleAuthSignUpSubmit(event)">
+                <div class="auth-input-group">
+                    <label for="signUpFullName">Full Name *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">👤</span>
+                        <input type="text" id="signUpFullName" class="auth-input-field" placeholder="e.g. Rahul Verma" autocomplete="name" required>
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="signUpEmail">Email Address *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">✉️</span>
+                        <input type="email" id="signUpEmail" class="auth-input-field" placeholder="you@domain.com" autocomplete="email" required>
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="signUpPhone">Mobile Phone Number *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">📱</span>
+                        <input type="tel" id="signUpPhone" class="auth-input-field" placeholder="10-digit mobile number" autocomplete="tel" inputmode="tel" required>
+                    </div>
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="signUpPassword">Create Password *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">🔒</span>
+                        <input type="password" id="signUpPassword" class="auth-input-field" placeholder="At least 5 characters" autocomplete="new-password" minlength="5" required>
+                        <button type="button" class="auth-password-toggle" onclick="togglePasswordVisibility('signUpPassword', this)">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" id="signUpSubmitBtn">
+                    Create Account & Get Started
+                </button>
+
+                <div class="auth-footer-help">
+                    Already have an account? <button type="button" onclick="setAuthTab('signin')">Sign In here</button>
+                </div>
+            </form>
+
+            <!-- 3. DEVELOPER ADMIN QUICK SIGN IN -->
+            <form id="authDevForm" class="auth-form" style="display: none;" onsubmit="handleAuthDevSubmit(event)">
+                <div style="background: #fffbeb; border: 1.5px solid #fde68a; border-radius: 12px; padding: 12px; margin-bottom: 14px; text-align: left;">
+                    <div style="font-weight: 800; color: #92400e; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                        <span>👑</span>
+                        <span>Developer Access Portal</span>
+                    </div>
+                    <p style="font-size: 0.8rem; color: #78350f; margin: 4px 0 0;">
+                        Reserved strictly for the application developer ("only me ie the one who developed it"). Grants master administrative access.
+                    </p>
+                </div>
+
+                <div class="auth-input-group">
+                    <label for="devPasscode">Developer Passcode or Password *</label>
+                    <div class="auth-input-wrapper">
+                        <span class="auth-input-icon">🔑</span>
+                        <input type="password" id="devPasscode" class="auth-input-field" placeholder="Enter developer passcode (e.g. admin123)" autocomplete="current-password" required>
+                        <button type="button" class="auth-password-toggle" onclick="togglePasswordVisibility('devPasscode', this)">👁️</button>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-submit-btn" style="background: #b45309;" id="devSubmitBtn">
+                    Unlock Developer Console
+                </button>
+
+                <div class="auth-footer-help">
+                    <button type="button" onclick="setAuthTab('signin')">← Back to Regular Sign In</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Global Footer -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <a class="brand footer-brand" href="#home" onclick="switchModule('home'); return false;">
+                <img src="../assets/svg/logo.svg" alt="" width="32" height="32">
+                <span>ResQTag</span>
+            </a>
+
+            <p>A simple way to make vehicle emergency contacts accessible.</p>
+
+            <div class="footer-links">
+                <a href="#home" onclick="switchModule('home'); return false;">Home</a>
+                <a href="#dashboard" onclick="switchModule('dashboard'); return false;">Dashboard</a>
+                <a href="#printable-qr" onclick="switchModule('printable-qr'); return false;">Print QR</a>
+                <a href="#qr-lookup" onclick="switchModule('qr-lookup'); return false;">Scan QR</a>
+                <a href="#report" onclick="switchModule('report'); return false;">Emergency View</a>
+                <a href="#admin" onclick="switchModule('admin'); return false;">Admin</a>
+            </div>
+
+            <p class="copyright">
+                © <span data-current-year></span> ResQTag. All rights reserved. Single-tab unified experience.
+            </p>
+        </div>
+    </footer>
+
+    <!-- ====================================================================
+         LIBRARIES & SCRIPTS
+         ==================================================================== -->
+    <script src="../assets/js/qrcode.min.js"></script>
+    <script>
+        if (typeof QRCode === "undefined") {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>');
+        }
+    </script>
+    <script src="../assets/js/jspdf.umd.min.js"></script>
+    <script>
+        if (typeof window.jspdf === "undefined") {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>');
+        }
+    </script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <!-- Firebase Cloud Firestore SDKs (Compat mode for zero-build web app) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="../assets/js/firebase-config.js"></script>
+
+    <!-- ResQTag Authentication & Multi-User Storage -->
+    <script src="../assets/js/auth.js"></script>
+    <script src="../assets/js/storage.js"></script>
+    <script src="../assets/js/contact.js"></script>
+    <script src="../assets/js/qr-scanner.js"></script>
+    <script src="../assets/js/main.js"></script>
+
+    <!-- ====================================================================
+         SINGLE-TAB ROUTER & MODULE INITIALIZATION LOGIC
+         ==================================================================== -->
+    <script>
+        // Global Single-Tab Router
+        const VALID_MODULES = ["home", "dashboard", "printable-qr", "qr-lookup", "report", "admin"];
+        let currentActiveModule = "home";
+
+        function switchModule(moduleName, extraParams = null) {
+            if (!VALID_MODULES.includes(moduleName)) {
+                moduleName = "home";
+            }
+
+            // Stop camera if leaving scanner
+            if (currentActiveModule === "qr-lookup" && moduleName !== "qr-lookup") {
+                if (typeof stopScannerCamera === "function") {
+                    stopScannerCamera();
+                }
+            }
+
+            currentActiveModule = moduleName;
+
+            // 1. Update module tab buttons
+            document.querySelectorAll(".module-tab-btn").forEach(btn => {
+                const isCurrent = btn.getAttribute("data-tab") === moduleName;
+                btn.classList.toggle("is-active", isCurrent);
+                btn.setAttribute("aria-selected", isCurrent ? "true" : "false");
+            });
+
+            // 2. Update view visibility
+            document.querySelectorAll(".app-module-view").forEach(view => {
+                view.classList.remove("is-active");
+            });
+
+            const targetView = document.getElementById("view-" + moduleName);
+            if (targetView) {
+                targetView.classList.add("is-active");
+            }
+
+            // 3. Update CTA button text & action
+            const navCta = document.getElementById("globalNavCta");
+            if (navCta) {
+                if (moduleName === "dashboard") {
+                    navCta.textContent = "My QR Code";
+                    navCta.onclick = () => switchModule("printable-qr");
+                } else if (moduleName === "printable-qr") {
+                    navCta.textContent = "Edit Vehicle";
+                    navCta.onclick = () => switchModule("dashboard");
+                } else {
+                    navCta.textContent = "My QR Code";
+                    navCta.onclick = () => switchModule("printable-qr");
+                }
+            }
+
+            // 4. Update URL hash in the exact SAME tab
+            let hashString = "#" + moduleName;
+            if (extraParams && typeof extraParams === "object") {
+                const q = new URLSearchParams(extraParams).toString();
+                if (q) hashString += "&" + q;
+            }
+            if (window.location.hash !== hashString) {
+                try {
+                    history.pushState(null, "", hashString);
+                } catch {
+                    window.location.hash = hashString;
+                }
+            }
+
+            // 5. Scroll to top smoothly
+            window.scrollTo({ top: 0, behavior: "smooth" });
+
+            // 6. Invoke module refresh hook
+            if (moduleName === "dashboard" && typeof refreshDashboardModule === "function") {
+                refreshDashboardModule();
+            } else if (moduleName === "printable-qr" && typeof refreshPrintableQrModule === "function") {
+                refreshPrintableQrModule();
+            } else if (moduleName === "report" && typeof refreshReportModule === "function") {
+                refreshReportModule(extraParams);
+            } else if (moduleName === "admin") {
+                if (typeof updateAdminAuthUI === "function") {
+                    updateAdminAuthUI();
+                }
+                if (typeof isAdminAuthenticated === "function" && isAdminAuthenticated() && typeof refreshAdminModule === "function") {
+                    refreshAdminModule();
+                }
+            }
+            if (typeof updateAdminTabIcon === "function") {
+                updateAdminTabIcon();
+            }
+        }
+
+        // Handle URL Hash on Load and HashChange
+        function handleHashRouting() {
+            const rawHash = window.location.hash.replace(/^#/, "");
+            if (!rawHash) {
+                switchModule("home");
+                return;
+            }
+
+            const parts = rawHash.split("&");
+            const targetMod = parts[0].toLowerCase();
+            const params = {};
+
+            for (let i = 1; i < parts.length; i++) {
+                const eqIdx = parts[i].indexOf("=");
+                if (eqIdx !== -1) {
+                    const k = parts[i].substring(0, eqIdx);
+                    const v = parts[i].substring(eqIdx + 1);
+                    params[decodeURIComponent(k)] = decodeURIComponent(v || "");
+                }
+            }
+
+            if (VALID_MODULES.includes(targetMod)) {
+                switchModule(targetMod, params);
+            } else {
+                switchModule("home");
+            }
+        }
+
+        window.addEventListener("hashchange", handleHashRouting);
+
+        // ---------------------------------------------------------------------
+        // MODULE 2: DASHBOARD CODE
+        // ---------------------------------------------------------------------
+        const vehicleForm = document.getElementById("vehicleForm");
+        const contactsContainer = document.getElementById("contactsContainer");
+        const addContactBtn = document.getElementById("addContactBtn");
+        const contactsMessage = document.getElementById("contactsMessage");
+        const profileStatus = document.getElementById("profileStatus");
+        const resetFormBtn = document.getElementById("resetFormBtn");
+
+        function addDashboardContact(name = "", phone = "") {
+            const card = document.createElement("div");
+            card.className = "contact-card";
+
+            const heading = document.createElement("h3");
+            heading.className = "contact-card-heading";
+
+            const nameLabel = document.createElement("label");
+            nameLabel.textContent = "Contact Name";
+            const nameInput = document.createElement("input");
+            nameInput.type = "text";
+            nameInput.name = "contactName";
+            nameInput.autocomplete = "name";
+            nameInput.placeholder = "Enter full name";
+            nameInput.value = name;
+
+            const phoneLabel = document.createElement("label");
+            phoneLabel.textContent = "Phone Number";
+            const phoneInput = document.createElement("input");
+            phoneInput.type = "tel";
+            phoneInput.name = "contactPhone";
+            phoneInput.autocomplete = "tel";
+            phoneInput.inputMode = "tel";
+            phoneInput.placeholder = "Enter phone number";
+            phoneInput.value = phone;
+
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "button button-secondary remove-contact-btn";
+            removeButton.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Remove contact';
+            removeButton.addEventListener("click", () => {
+                card.remove();
+                renumberDashboardContacts();
+            });
+
+            card.append(heading, nameLabel, nameInput, phoneLabel, phoneInput, removeButton);
+            contactsContainer.appendChild(card);
+            renumberDashboardContacts();
+        }
+
+        function renumberDashboardContacts() {
+            const cards = contactsContainer.querySelectorAll(".contact-card");
+            cards.forEach((card, index) => {
+                card.querySelector(".contact-card-heading").textContent = "Emergency Contact " + (index + 1);
+            });
+            contactsMessage.textContent = cards.length + " emergency contact" + (cards.length === 1 ? "" : "s") + " added.";
+        }
+
+        function readDashboardContacts() {
+            const cards = contactsContainer.querySelectorAll(".contact-card");
+            const contacts = [];
+            for (const card of cards) {
+                const name = card.querySelector('[name="contactName"]').value.trim();
+                const phone = card.querySelector('[name="contactPhone"]').value.trim();
+                if (!name && !phone) continue;
+                if (!name || !phone) throw new Error("Complete both fields for every contact you add.");
+                if (!isValidPhoneNumber(phone)) throw new Error("Enter a valid phone number for " + name + ".");
+                contacts.push({ name, phone });
+            }
+            return contacts;
+        }
+
+        function updateActiveProfileBanner(profile) {
+            const container = document.getElementById("activeProfileBannerContainer");
+            if (!container) return;
+            if (!profile || !profile.vehicleNumber) {
+                container.innerHTML = "";
+                return;
+            }
+            const reg = String(profile.vehicleNumber).toUpperCase();
+            const desc = [profile.vehicleModel, profile.vehicleColor, profile.vehicleType].filter(Boolean).join(" · ") || "Vehicle registered";
+            const owner = profile.ownerName ? (profile.ownerName + (profile.ownerPhone ? " (" + profile.ownerPhone + ")" : "")) : "";
+            const sub = [desc, owner].filter(Boolean).join(" • ");
+
+            container.innerHTML = `
+                <div class="active-profile-card">
+                    <div class="active-profile-card-content">
+                        <span class="active-profile-badge">SAVED IN RESQTAG</span>
+                        <div>
+                            <div class="active-profile-plate">${reg}</div>
+                            <div class="active-profile-sub">${sub}</div>
+                        </div>
+                    </div>
+                    <div class="active-profile-actions">
+                        <button type="button" class="btn-sm btn-edit" onclick="loadSavedProfileIntoForm()">
+                            ✏️ Edit Saved Tag
+                        </button>
+                        <button type="button" class="btn-sm btn-view-qr" onclick="switchModule('printable-qr')">
+                            🖨️ View QR Code →
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadSavedProfileIntoForm() {
+            const profile = getVehicleProfile();
+            if (!profile) return;
+            document.getElementById("ownerName").value = profile.ownerName || "";
+            document.getElementById("ownerPhone").value = profile.ownerPhone || "";
+            document.getElementById("vehicleNumber").value = profile.vehicleNumber || "";
+            document.getElementById("vehicleModel").value = profile.vehicleModel || "";
+            document.getElementById("vehicleType").value = profile.vehicleType || "";
+            document.getElementById("vehicleColor").value = profile.vehicleColor || "";
+
+            contactsContainer.replaceChildren();
+            if (Array.isArray(profile.contacts) && profile.contacts.length > 0) {
+                profile.contacts.forEach(contact => {
+                    addDashboardContact(contact.name || "", contact.phone || "");
+                });
+            } else {
+                addDashboardContact();
+            }
+            showMessage("Saved profile loaded into form for editing.", "info");
+        }
+
+        // On open/refresh: keep inputs empty so user can register fresh vehicles without old data lingering
+        function refreshDashboardModule() {
+            const profile = getVehicleProfile();
+            updateActiveProfileBanner(profile);
+
+            // Pre-fill owner details from account if user is signed in
+            const currentUser = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+            const ownerNameInput = document.getElementById("ownerName");
+            const ownerPhoneInput = document.getElementById("ownerPhone");
+            if (currentUser && currentUser.name && ownerNameInput && !ownerNameInput.value) {
+                ownerNameInput.value = currentUser.name;
+            }
+            if (currentUser && currentUser.phone && ownerPhoneInput && !ownerPhoneInput.value) {
+                ownerPhoneInput.value = currentUser.phone;
+            }
+
+            // Keep contacts container ready with 1 empty row if no fields are present
+            if (!contactsContainer.hasChildNodes()) {
+                addDashboardContact();
+            }
+
+            if (profile && profile.vehicleNumber) {
+                profileStatus.textContent = "Active Tag: " + profile.vehicleNumber.toUpperCase();
+            } else {
+                profileStatus.textContent = "No profile saved yet";
+            }
+        }
+
+        if (addContactBtn) {
+            addContactBtn.addEventListener("click", () => addDashboardContact());
+        }
+
+        function handleVehicleFormSubmission(event) {
+            if (event) event.preventDefault();
+
+            // Require user account to register and save vehicle
+            if (typeof isUserLoggedIn === "function" && !isUserLoggedIn()) {
+                openAuthModal("signup");
+                showAuthError("Please create an account or sign in so your ResQTag is saved to your profile.");
+                return;
+            }
+
+            try {
+                const regInput = document.getElementById("vehicleNumber");
+                const vehicleNumber = (regInput ? regInput.value : "").trim().toUpperCase();
+                if (!vehicleNumber) {
+                    throw new Error("Please enter a vehicle registration number.");
+                }
+
+                const ownerPhone = document.getElementById("ownerPhone").value.trim();
+                if (!isValidPhoneNumber(ownerPhone)) {
+                    throw new Error("Enter a valid owner phone number (at least 10 digits).");
+                }
+
+                const ownerName = document.getElementById("ownerName").value.trim() || "Vehicle Owner";
+
+                const profile = {
+                    ownerName,
+                    ownerPhone,
+                    vehicleNumber,
+                    vehicleModel: document.getElementById("vehicleModel").value.trim(),
+                    vehicleType: document.getElementById("vehicleType").value,
+                    vehicleColor: document.getElementById("vehicleColor").value.trim(),
+                    contacts: readDashboardContacts()
+                };
+
+                // 1. Save profile to active storage
+                saveVehicleProfile(profile);
+
+                // 2. Also register in local vehicles list (for admin directory)
+                try {
+                    let list = [];
+                    const storedList = localStorage.getItem("resqtagVehicles");
+                    if (storedList) list = JSON.parse(storedList);
+                    if (!Array.isArray(list)) list = [];
+                    const existingIdx = list.findIndex(v => v.vehicleNumber.toUpperCase() === vehicleNumber);
+                    if (existingIdx >= 0) list[existingIdx] = profile;
+                    else list.unshift(profile);
+                    localStorage.setItem("resqtagVehicles", JSON.stringify(list));
+                } catch {}
+
+                // 3. Clear ALL form fields completely so when opened again it's fresh
+                vehicleForm.reset();
+                document.getElementById("vehicleNumber").value = "";
+                document.getElementById("vehicleModel").value = "";
+                document.getElementById("vehicleType").value = "";
+                document.getElementById("vehicleColor").value = "";
+                document.getElementById("ownerName").value = "";
+                document.getElementById("ownerPhone").value = "";
+                contactsContainer.replaceChildren();
+                addDashboardContact();
+                clearMessage();
+
+                // 4. Update banner & status
+                updateActiveProfileBanner(profile);
+                profileStatus.textContent = "Saved: " + vehicleNumber;
+
+                // 5. Navigate directly to the QR section!
+                switchModule("printable-qr");
+            } catch (error) {
+                showMessage(error.message || "Unable to save your vehicle profile.", "error");
+            }
+        }
+
+        if (vehicleForm) {
+            vehicleForm.addEventListener("submit", handleVehicleFormSubmission);
+
+            // Pressing Enter in any input field immediately saves and goes to QR section
+            vehicleForm.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && e.target.tagName !== "BUTTON" && e.target.tagName !== "TEXTAREA") {
+                    e.preventDefault();
+                    if (typeof vehicleForm.requestSubmit === "function") {
+                        vehicleForm.requestSubmit();
+                    } else {
+                        handleVehicleFormSubmission(e);
+                    }
+                }
+            });
+        }
+
+        if (resetFormBtn) {
+            resetFormBtn.addEventListener("click", () => {
+                if (!window.confirm("Clear the form fields?")) return;
+                vehicleForm.reset();
+                document.getElementById("vehicleNumber").value = "";
+                document.getElementById("vehicleModel").value = "";
+                document.getElementById("vehicleType").value = "";
+                document.getElementById("vehicleColor").value = "";
+                document.getElementById("ownerName").value = "";
+                document.getElementById("ownerPhone").value = "";
+                contactsContainer.replaceChildren();
+                addDashboardContact();
+                clearMessage();
+                profileStatus.textContent = hasVehicleProfile() ? "Saved profile remains in system" : "No profile saved yet";
+            });
+        }
+
+        // ---------------------------------------------------------------------
+        // MODULE 3: PRINTABLE QR STANDEE CODE
+        // ---------------------------------------------------------------------
+        let printableVehicleData = null;
+        let printableCurrentTheme = "emerald";
+
+        const THEME_CONFIG = {
+            emerald: {
+                bannerStart: "#092823",
+                bannerMid: "#104e43",
+                bannerEnd: "#176b5b",
+                subPromptBg: "#e6f4f0",
+                subPromptText: "#0d463b",
+                accent: "#176b5b",
+                compatBg: "#f2f8f6",
+                compatBorder: "#d1e5de"
+            },
+            purple: {
+                bannerStart: "#370e63",
+                bannerMid: "#571e94",
+                bannerEnd: "#762fc4",
+                subPromptBg: "#f3ebfc",
+                subPromptText: "#511b8b",
+                accent: "#571e94",
+                compatBg: "#faf6fd",
+                compatBorder: "#e5d6fa"
+            },
+            amber: {
+                bannerStart: "#78350f",
+                bannerMid: "#b45309",
+                bannerEnd: "#d97706",
+                subPromptBg: "#fef3c7",
+                subPromptText: "#92400e",
+                accent: "#b45309",
+                compatBg: "#fffbeb",
+                compatBorder: "#fed7aa"
+            }
+        };
+
+        function readSavedProfileForPrint() {
+            try {
+                let data = null;
+                if (typeof getVehicleProfile === "function") {
+                    data = getVehicleProfile();
+                }
+                if (!data) {
+                    const raw = localStorage.getItem("resqtagVehicle");
+                    if (raw) data = JSON.parse(raw);
+                }
+                if (!data) return null;
+
+                const reg = data.vehicleNumber || data.vehicleNo || "";
+                const ownerName = data.ownerName || data.name || "Vehicle Owner";
+                const ownerPhone = data.ownerPhone || data.phone || "";
+                if (!reg) return null;
+
+                return {
+                    vehicleNumber: reg,
+                    ownerName,
+                    ownerPhone,
+                    vehicleModel: data.vehicleModel || data.makeModel || "",
+                    vehicleType: data.vehicleType || "Car",
+                    vehicleColor: data.vehicleColor || "",
+                    contacts: Array.isArray(data.contacts) ? data.contacts : []
+                };
+            } catch {
+                return null;
+            }
+        }
+
+        function makeEmergencyTextPayload(data) {
+            const reg = String(data.vehicleNumber || "VEHICLE").toUpperCase().trim();
+            const ownerPhone = String(data.ownerPhone || "").trim();
+            const model = String(data.vehicleModel || "").trim();
+            const contacts = Array.isArray(data.contacts) ? data.contacts : [];
+
+            const lines = [
+                "RESQTAG EMERGENCY CARD",
+                "VEHICLE: " + reg
+            ];
+
+            if (model) lines.push("MODEL: " + model);
+
+            if (contacts.length > 0) {
+                contacts.forEach((c, idx) => {
+                    const name = c.name ? String(c.name).trim() : ("ICE " + (idx + 1));
+                    const phone = c.phone ? String(c.phone).trim() : "";
+                    if (phone) lines.push("ICE " + (idx + 1) + ": " + name + " " + phone);
+                });
+            }
+
+            if (ownerPhone) {
+                lines.push("OWNER: " + ownerPhone);
+            }
+
+            return lines.join("\n");
+        }
+
+        function makeVCardPayload(data) {
+            const reg = String(data.vehicleNumber || "VEHICLE").toUpperCase().trim();
+            const ownerName = String(data.ownerName || "Vehicle Owner").trim();
+            const ownerPhone = String(data.ownerPhone || "").trim();
+            const contacts = Array.isArray(data.contacts) ? data.contacts : [];
+
+            const firstContact = contacts.length > 0 ? contacts[0] : null;
+            const firstContactName = firstContact ? (firstContact.name || "Emergency Contact") : ownerName;
+            const firstContactPhone = firstContact ? (firstContact.phone || ownerPhone) : ownerPhone;
+
+            const lines = [
+                "BEGIN:VCARD",
+                "VERSION:3.0",
+                "FN:ICE: " + firstContactName + " (" + reg + ")",
+                "N:;" + firstContactName + ";;;",
+                "ORG:ResQTag (" + reg + ")"
+            ];
+
+            if (firstContactPhone) {
+                lines.push("TEL;TYPE=CELL,PREF;X-LABEL=ICE:" + firstContactPhone);
+            }
+
+            for (let i = 1; i < contacts.length; i++) {
+                const c = contacts[i];
+                const cPhone = String(c.phone || "").trim();
+                if (cPhone) {
+                    lines.push("TEL;TYPE=CELL;X-LABEL=ICE " + (i + 1) + ":" + cPhone);
+                }
+            }
+
+            if (ownerPhone) {
+                lines.push("TEL;TYPE=WORK;X-LABEL=Owner:" + ownerPhone);
+            }
+
+            lines.push("NOTE:ResQTag Emergency Card for " + reg);
+            lines.push("END:VCARD");
+
+            return lines.join("\r\n");
+        }
+
+        const RESQTAG_PUBLIC_TUNNEL_URL = "https://infrared-kinda-candidate-rec.trycloudflare.com/frontend/index.html#report";
+
+        function makeWebEmergencyPayload(data) {
+            const customInput = document.getElementById("customWebBase");
+            let base = customInput ? customInput.value.trim() : "";
+            if (!base) {
+                if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+                    base = RESQTAG_PUBLIC_TUNNEL_URL;
+                } else if (window.location.protocol === "file:") {
+                    base = RESQTAG_PUBLIC_TUNNEL_URL;
+                } else {
+                    const path = window.location.pathname.includes("/frontend/")
+                        ? window.location.pathname.replace(/\/[^/]*$/, "/index.html")
+                        : "/frontend/index.html";
+                    base = window.location.origin + path + "#report";
+                }
+            }
+            // Strip any existing query or hash to ensure target is cleanly #report
+            base = base.replace(/[?#].*$/, "") + "#report";
+
+            const compactData = {
+                vehicleNumber: data.vehicleNumber,
+                ownerName: data.ownerName || "",
+                ownerPhone: data.ownerPhone || "",
+                vehicleModel: data.vehicleModel || "",
+                vehicleType: data.vehicleType || "",
+                vehicleColor: data.vehicleColor || "",
+                contacts: Array.isArray(data.contacts) ? data.contacts.map(c => ({
+                    name: String(c.name || "").trim(),
+                    phone: String(c.phone || "").trim()
+                })).filter(c => c.name && c.phone) : []
+            };
+
+            const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(compactData))));
+            const vNum = encodeURIComponent(String(data.vehicleNumber || "").trim().toUpperCase());
+            return base + "&v=" + vNum + "&data=" + encodeURIComponent(encoded);
+        }
+
+        function getPrintableQrText() {
+            if (!printableVehicleData) return "";
+            const radioText = document.getElementById("radioText");
+            const radioVcard = document.getElementById("radioVcard");
+            // Emergency Web Portal is the default format so scanning opens the website interface
+            if (radioText && radioText.checked) return makeEmergencyTextPayload(printableVehicleData);
+            if (radioVcard && radioVcard.checked) return makeVCardPayload(printableVehicleData);
+            return makeWebEmergencyPayload(printableVehicleData);
+        }
+
+        function generatePrintableQrMatrix() {
+            const qrContainer = document.getElementById("qrContainer");
+            const qrStatus = document.getElementById("printableQrStatus");
+            if (!qrContainer || !printableVehicleData) return;
+
+            if (typeof QRCode === "undefined") {
+                setTimeout(generatePrintableQrMatrix, 200);
+                return;
+            }
+
+            const payload = getPrintableQrText();
+            qrContainer.innerHTML = "";
+            qrContainer.classList.remove("has-img");
+
+            try {
+                new QRCode(qrContainer, {
+                    text: payload,
+                    width: 480,
+                    height: 480,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+            } catch (err) {
+                console.warn("QR code overflow, using compact format:", err);
+                const compactPayload = "RESQTAG EMERGENCY\nVEHICLE: " + (printableVehicleData.vehicleNumber || "") +
+                    (printableVehicleData.ownerPhone ? "\nOWNER: " + printableVehicleData.ownerPhone : "");
+                qrContainer.innerHTML = "";
+                new QRCode(qrContainer, {
+                    text: compactPayload,
+                    width: 480,
+                    height: 480,
+                    colorDark: "#000000",
+                    colorLight: "#ffffff",
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+            }
+
+            setTimeout(() => {
+                const canvas = qrContainer.querySelector("canvas");
+                const img = qrContainer.querySelector("img");
+                if (canvas && img) {
+                    if (!img.src || img.src.length < 50) {
+                        try {
+                            img.src = canvas.toDataURL("image/png");
+                        } catch {}
+                    }
+                    if (img.src && img.src.length > 50) {
+                        qrContainer.classList.add("has-img");
+                    }
+                }
+            }, 60);
+
+            if (qrStatus) {
+                const radioText = document.getElementById("radioText");
+                const radioWeb = document.getElementById("radioWeb");
+                if (radioText && radioText.checked) {
+                    qrStatus.textContent = "✓ Instant Emergency Card Ready — Emergency contacts & 1-tap call show directly on any phone camera.";
+                } else if (radioWeb && radioWeb.checked) {
+                    qrStatus.textContent = "✓ Web Emergency Portal Link Ready — Opens report view in this single-tab application.";
+                } else {
+                    qrStatus.textContent = "✓ Emergency Contact Card Ready — Prompts smartphone to save ICE contact in address book.";
+                }
+            }
+        }
+
+        function refreshPrintableQrModule() {
+            printableVehicleData = readSavedProfileForPrint();
+
+            const emptyState = document.getElementById("emptyState");
+            const readyState = document.getElementById("readyState");
+            const badgeVehicleNumber = document.getElementById("badgeVehicleNumber");
+            const badgeVehicleDetails = document.getElementById("badgeVehicleDetails");
+            const tagVehicleNumber = document.getElementById("tagVehicleNumber");
+            const tagVehicleModelText = document.getElementById("tagVehicleModelText");
+            const tagPhoneBadge = document.getElementById("tagPhoneBadge");
+            const tagEmergencyBadge = document.getElementById("tagEmergencyBadge");
+
+            if (!printableVehicleData) {
+                if (emptyState) emptyState.hidden = false;
+                if (readyState) readyState.hidden = true;
+                return;
+            }
+
+            if (emptyState) emptyState.hidden = true;
+            if (readyState) readyState.hidden = false;
+
+            const reg = printableVehicleData.vehicleNumber.toUpperCase();
+            if (badgeVehicleNumber) badgeVehicleNumber.textContent = reg;
+            if (tagVehicleNumber) tagVehicleNumber.textContent = reg;
+
+            const modelParts = [printableVehicleData.vehicleModel, printableVehicleData.vehicleColor, printableVehicleData.vehicleType].filter(Boolean);
+            const modelString = modelParts.join(" · ") || "Vehicle registered";
+            if (badgeVehicleDetails) badgeVehicleDetails.textContent = modelString;
+            if (tagVehicleModelText) tagVehicleModelText.textContent = modelString;
+
+            if (tagPhoneBadge) {
+                if (printableVehicleData.ownerPhone) {
+                    tagPhoneBadge.textContent = "📞 Owner: " + printableVehicleData.ownerPhone;
+                    tagPhoneBadge.style.display = "inline-flex";
+                } else {
+                    tagPhoneBadge.style.display = "none";
+                }
+            }
+
+            if (tagEmergencyBadge) {
+                if (printableVehicleData.contacts && printableVehicleData.contacts.length > 0) {
+                    const cSummary = printableVehicleData.contacts
+                        .map((c, i) => (c.name || "Contact " + (i + 1)) + " (" + c.phone + ")")
+                        .join(" · ");
+                    tagEmergencyBadge.textContent = "🚨 ICE: " + cSummary;
+                    tagEmergencyBadge.style.display = "inline-flex";
+                } else {
+                    tagEmergencyBadge.style.display = "none";
+                }
+            }
+
+            generatePrintableQrMatrix();
+        }
+
+        function setPrintableTheme(theme) {
+            printableCurrentTheme = theme;
+            const tagStandee = document.getElementById("tagStandee");
+            if (tagStandee) tagStandee.className = "tag-standee theme-" + theme;
+            document.getElementById("themeEmeraldBtn")?.classList.toggle("is-active", theme === "emerald");
+            document.getElementById("themePurpleBtn")?.classList.toggle("is-active", theme === "purple");
+            document.getElementById("themeAmberBtn")?.classList.toggle("is-active", theme === "amber");
+        }
+
+        // Setup Printable QR event listeners
+        document.getElementById("themeEmeraldBtn")?.addEventListener("click", () => setPrintableTheme("emerald"));
+        document.getElementById("themePurpleBtn")?.addEventListener("click", () => setPrintableTheme("purple"));
+        document.getElementById("themeAmberBtn")?.addEventListener("click", () => setPrintableTheme("amber"));
+
+        const radioText = document.getElementById("radioText");
+        const radioWeb = document.getElementById("radioWeb");
+        const radioVcard = document.getElementById("radioVcard");
+        const formatCardText = document.getElementById("formatCardText");
+        const formatCardWeb = document.getElementById("formatCardWeb");
+        const formatCardVcard = document.getElementById("formatCardVcard");
+        const webUrlBox = document.getElementById("webUrlBox");
+
+        radioText?.addEventListener("change", () => {
+            formatCardText?.classList.add("is-active");
+            formatCardWeb?.classList.remove("is-active");
+            formatCardVcard?.classList.remove("is-active");
+            if (webUrlBox) webUrlBox.style.display = "none";
+            generatePrintableQrMatrix();
+        });
+
+        radioWeb?.addEventListener("change", () => {
+            formatCardWeb?.classList.add("is-active");
+            formatCardText?.classList.remove("is-active");
+            formatCardVcard?.classList.remove("is-active");
+            if (webUrlBox) webUrlBox.style.display = "block";
+            generatePrintableQrMatrix();
+        });
+
+        radioVcard?.addEventListener("change", () => {
+            formatCardVcard?.classList.add("is-active");
+            formatCardText?.classList.remove("is-active");
+            formatCardWeb?.classList.remove("is-active");
+            if (webUrlBox) webUrlBox.style.display = "none";
+            generatePrintableQrMatrix();
+        });
+
+        document.getElementById("toggleContacts")?.addEventListener("change", (e) => {
+            const badge = document.getElementById("tagEmergencyBadge");
+            if (badge) badge.style.display = e.target.checked && printableVehicleData?.contacts?.length ? "inline-flex" : "none";
+        });
+
+        document.getElementById("togglePhone")?.addEventListener("change", (e) => {
+            const badge = document.getElementById("tagPhoneBadge");
+            if (badge) badge.style.display = e.target.checked && printableVehicleData?.ownerPhone ? "inline-flex" : "none";
+        });
+
+        document.getElementById("toggleModel")?.addEventListener("change", (e) => {
+            const modelText = document.getElementById("tagVehicleModelText");
+            if (modelText) modelText.style.display = e.target.checked && printableVehicleData?.vehicleModel ? "block" : "none";
+        });
+
+        document.getElementById("loadSampleBtn")?.addEventListener("click", () => {
+            const sample = {
+                ownerName: "John Doe",
+                ownerPhone: "+91 98765 43210",
+                vehicleNumber: "TS 09 AB 1234",
+                vehicleModel: "Maruti Suzuki WagonR",
+                vehicleType: "Car",
+                vehicleColor: "White",
+                contacts: [
+                    { name: "Jane Doe (Spouse)", phone: "+91 98765 01234" },
+                    { name: "Robert Smith (Brother)", phone: "+91 98765 99999" }
+                ]
+            };
+            try {
+                localStorage.setItem("resqtagVehicle", JSON.stringify(sample));
+            } catch {}
+            refreshPrintableQrModule();
+        });
+
+        // High-res Standee Canvas Generator
+        function renderHighResStandeeCanvas(callback) {
+            if (!printableVehicleData) return;
+
+            const W = 1200;
+            const H = 1720;
+            const canvas = document.createElement("canvas");
+            canvas.width = W;
+            canvas.height = H;
+            const ctx = canvas.getContext("2d");
+            const theme = THEME_CONFIG[printableCurrentTheme] || THEME_CONFIG.emerald;
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillRect(0, 0, W, H);
+
+            function roundRect(x, y, w, h, r, fill, stroke, strokeColor = "#000", lineWidth = 2) {
+                ctx.beginPath();
+                ctx.moveTo(x + r, y);
+                ctx.lineTo(x + w - r, y);
+                ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                ctx.lineTo(x + w - r, y + h);
+                ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                ctx.lineTo(x + r, y + h);
+                ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                ctx.lineTo(x, y + r);
+                ctx.quadraticCurveTo(x, y, x + r, y);
+                ctx.closePath();
+                if (fill) ctx.fill();
+                if (stroke) {
+                    ctx.lineWidth = lineWidth;
+                    ctx.strokeStyle = strokeColor;
+                    ctx.stroke();
+                }
+            }
+
+            ctx.setLineDash([14, 10]);
+            roundRect(16, 16, W - 32, H - 32, 28, false, true, "#b9cdc6", 3);
+            ctx.setLineDash([]);
+
+            const bannerGrad = ctx.createLinearGradient(0, 20, W, 260);
+            bannerGrad.addColorStop(0, theme.bannerStart);
+            bannerGrad.addColorStop(0.55, theme.bannerMid);
+            bannerGrad.addColorStop(1, theme.bannerEnd);
+
+            ctx.save();
+            ctx.beginPath();
+            ctx.moveTo(20 + 26, 20);
+            ctx.lineTo(W - 20 - 26, 20);
+            ctx.quadraticCurveTo(W - 20, 20, W - 20, 20 + 26);
+            ctx.lineTo(W - 20, 250);
+            ctx.lineTo(20, 250);
+            ctx.lineTo(20, 20 + 26);
+            ctx.quadraticCurveTo(20, 20, 20 + 26, 20);
+            ctx.closePath();
+            ctx.fillStyle = bannerGrad;
+            ctx.fill();
+            ctx.restore();
+
+            const logoImg = new Image();
+            logoImg.crossOrigin = "anonymous";
+            logoImg.src = "../assets/svg/logo.svg";
+
+            function finishPainting() {
+                ctx.save();
+                ctx.fillStyle = "#ffffff";
+                ctx.beginPath();
+                ctx.arc(380, 115, 42, 0, Math.PI * 2);
+                ctx.fill();
+                if (logoImg.complete && logoImg.naturalWidth > 0) {
+                    ctx.drawImage(logoImg, 342, 77, 76, 76);
+                }
+                ctx.restore();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "800 64px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+                ctx.textAlign = "left";
+                ctx.fillText("ResQTag", 445, 126);
+
+                roundRect(740, 92, 145, 36, 18, true, true, "rgba(255,255,255,0.4)", 2);
+                ctx.fillStyle = "rgba(255,255,255,0.25)";
+                ctx.fill();
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "800 19px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("EMERGENCY", 812, 117);
+
+                ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+                ctx.font = "700 24px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("VEHICLE SAFETY & RESCUE SYSTEM", W / 2, 195);
+
+                ctx.fillStyle = theme.subPromptBg;
+                ctx.fillRect(20, 250, W - 40, 54);
+                ctx.fillStyle = theme.subPromptText;
+                ctx.font = "800 23px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("SCAN FOR EMERGENCY CONTACT & OWNER NOTIFICATION", W / 2, 285);
+
+                const cardX = 140;
+                const cardY = 330;
+                const cardW = W - 280;
+                const cardH = 680;
+
+                ctx.fillStyle = "#ffffff";
+                roundRect(cardX, cardY, cardW, cardH, 24, true, true, "#e2ebe7", 2);
+
+                const bLen = 48;
+                const bPad = 26;
+                ctx.lineWidth = 6;
+                ctx.strokeStyle = theme.accent;
+                ctx.lineCap = "round";
+
+                ctx.beginPath();
+                ctx.moveTo(cardX + bPad, cardY + bPad + bLen);
+                ctx.lineTo(cardX + bPad, cardY + bPad);
+                ctx.lineTo(cardX + bPad + bLen, cardY + bPad);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(cardX + cardW - bPad - bLen, cardY + bPad);
+                ctx.lineTo(cardX + cardW - bPad, cardY + bPad);
+                ctx.lineTo(cardX + cardW - bPad, cardY + bPad + bLen);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(cardX + bPad, cardY + cardH - bPad - bLen);
+                ctx.lineTo(cardX + bPad, cardY + cardH - bPad);
+                ctx.lineTo(cardX + bPad + bLen, cardY + cardH - bPad);
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.moveTo(cardX + cardW - bPad - bLen, cardY + cardH - bPad);
+                ctx.lineTo(cardX + cardW - bPad, cardY + cardH - bPad);
+                ctx.lineTo(cardX + cardW - bPad, cardY + cardH - bPad - bLen);
+                ctx.stroke();
+
+                const qrSize = 510;
+                const qrX = (W - qrSize) / 2;
+                const qrY = cardY + 55;
+
+                let painted = false;
+                try {
+                    const tempDiv = document.createElement("div");
+                    new QRCode(tempDiv, {
+                        text: getPrintableQrText(),
+                        width: qrSize,
+                        height: qrSize,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.L
+                    });
+                    const directCanvas = tempDiv.querySelector("canvas");
+                    if (directCanvas) {
+                        ctx.drawImage(directCanvas, qrX, qrY, qrSize, qrSize);
+                        painted = true;
+                    }
+                } catch (e) {
+                    console.warn("Direct QR standee render fallback:", e);
+                }
+
+                if (!painted) {
+                    const qrContainer = document.getElementById("qrContainer");
+                    const qrImg = qrContainer ? qrContainer.querySelector("img") : null;
+                    const qrCanvasEl = qrContainer ? qrContainer.querySelector("canvas") : null;
+                    const qrSource = (qrImg && qrImg.complete && qrImg.naturalWidth > 0) ? qrImg : qrCanvasEl;
+                    if (qrSource) {
+                        ctx.drawImage(qrSource, qrX, qrY, qrSize, qrSize);
+                    }
+                }
+
+                ctx.fillStyle = "#5a6f69";
+                ctx.font = "600 23px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("📷 Scan with any phone camera or Google Lens", W / 2, cardY + cardH - 35);
+
+                const plateW = 540;
+                const plateH = 88;
+                const plateX = (W - plateW) / 2;
+                const plateY = 1045;
+
+                ctx.fillStyle = "#ffffff";
+                roundRect(plateX, plateY, plateW, plateH, 12, true, true, "#0f172a", 4);
+
+                const indStripW = 76;
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(plateX + 12, plateY);
+                ctx.lineTo(plateX + indStripW, plateY);
+                ctx.lineTo(plateX + indStripW, plateY + plateH);
+                ctx.lineTo(plateX + 12, plateY + plateH);
+                ctx.quadraticCurveTo(plateX, plateY + plateH, plateX, plateY + plateH - 12);
+                ctx.lineTo(plateX, plateY + 12);
+                ctx.quadraticCurveTo(plateX, plateY, plateX + 12, plateY);
+                ctx.closePath();
+                ctx.fillStyle = "#003399";
+                ctx.fill();
+                ctx.restore();
+
+                ctx.fillStyle = "#ffffff";
+                ctx.font = "24px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("🇮🇳", plateX + indStripW / 2, plateY + 38);
+                ctx.font = "900 22px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.fillText("IND", plateX + indStripW / 2, plateY + 68);
+
+                ctx.fillStyle = "#0f172a";
+                ctx.font = "900 48px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+                ctx.textAlign = "center";
+                const regText = (printableVehicleData.vehicleNumber || "VEHICLE").toUpperCase();
+                ctx.fillText(regText, plateX + indStripW + (plateW - indStripW) / 2, plateY + 62);
+
+                let nextY = plateY + plateH + 34;
+
+                const toggleModel = document.getElementById("toggleModel");
+                if (toggleModel && toggleModel.checked && printableVehicleData.vehicleModel) {
+                    ctx.fillStyle = "#38524b";
+                    ctx.font = "600 26px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    const modelDesc = [printableVehicleData.vehicleModel, printableVehicleData.vehicleColor, printableVehicleData.vehicleType].filter(Boolean).join(" · ");
+                    ctx.fillText(modelDesc, W / 2, nextY);
+                    nextY += 40;
+                }
+
+                const togglePhone = document.getElementById("togglePhone");
+                if (togglePhone && togglePhone.checked && printableVehicleData.ownerPhone) {
+                    const phoneText = "📞 Owner: " + printableVehicleData.ownerPhone;
+                    ctx.font = "700 24px -apple-system, BlinkMacSystemFont, sans-serif";
+                    const pMetrics = ctx.measureText(phoneText);
+                    const pW = pMetrics.width + 36;
+                    ctx.fillStyle = "#eef5f2";
+                    roundRect((W - pW) / 2, nextY - 24, pW, 38, 8, true, false);
+                    ctx.fillStyle = "#113830";
+                    ctx.textAlign = "center";
+                    ctx.fillText(phoneText, W / 2, nextY + 4);
+                    nextY += 48;
+                }
+
+                const toggleContacts = document.getElementById("toggleContacts");
+                if (toggleContacts && toggleContacts.checked && printableVehicleData.contacts && printableVehicleData.contacts.length > 0) {
+                    const displayContacts = printableVehicleData.contacts.slice(0, 2);
+                    displayContacts.forEach((contact, idx) => {
+                        const cPrefix = displayContacts.length > 1 ? `🚨 ICE ${idx + 1}: ` : "🚨 ICE: ";
+                        const iceText = cPrefix + (contact.name || "Emergency Contact") + " (" + contact.phone + ")";
+                        ctx.font = "700 22px -apple-system, BlinkMacSystemFont, sans-serif";
+                        const iceMetrics = ctx.measureText(iceText);
+                        const iceW = Math.min(iceMetrics.width + 36, W - 120);
+                        ctx.fillStyle = "#fef2f2";
+                        roundRect((W - iceW) / 2, nextY - 24, iceW, 38, 8, true, false);
+                        ctx.fillStyle = "#991b1b";
+                        ctx.textAlign = "center";
+                        ctx.fillText(iceText, W / 2, nextY + 4);
+                        nextY += 46;
+                    });
+                }
+
+                const compatY = 1350;
+                const compatW = W - 200;
+                const compatH = 180;
+                const compatX = 100;
+
+                ctx.fillStyle = theme.compatBg;
+                roundRect(compatX, compatY, compatW, compatH, 18, true, true, theme.compatBorder, 2);
+
+                ctx.fillStyle = theme.accent;
+                ctx.font = "800 22px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText("WORKS WITH ANY CAMERA • NO APP DOWNLOAD NEEDED", W / 2, compatY + 42);
+
+                const badges = ["🔍 Google Lens", "🍏 iPhone Camera", "🤖 Android Camera", "💬 WhatsApp"];
+                const bStep = compatW / 4;
+                ctx.font = "700 22px -apple-system, BlinkMacSystemFont, sans-serif";
+
+                badges.forEach((bText, idx) => {
+                    const bX = compatX + bStep * idx + bStep / 2;
+                    const bMetrics = ctx.measureText(bText);
+                    const pillW = bMetrics.width + 24;
+                    ctx.fillStyle = "#ffffff";
+                    roundRect(bX - pillW / 2, compatY + 66, pillW, 38, 19, true, true, "#c6dcd5", 1.5);
+                    ctx.fillStyle = "#153d34";
+                    ctx.fillText(bText, bX, compatY + 93);
+                });
+
+                ctx.fillStyle = "#5c736d";
+                ctx.font = "500 21px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.fillText("Point phone camera at QR to view emergency info and call owner instantly", W / 2, compatY + 145);
+
+                ctx.fillStyle = "#6b7f79";
+                ctx.font = "500 20px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.fillText("✂ Cut along outer border and place on vehicle windshield, dashboard, or visor", W / 2, 1600);
+
+                ctx.fillStyle = "#96aba5";
+                ctx.font = "700 18px -apple-system, BlinkMacSystemFont, sans-serif";
+                ctx.fillText("RESQTAG VEHICLE EMERGENCY SYSTEM • RESQTAG.APP", W / 2, 1640);
+
+                callback(canvas);
+            }
+
+            if (logoImg.complete && logoImg.naturalWidth > 0) {
+                finishPainting();
+            } else {
+                logoImg.onload = finishPainting;
+                logoImg.onerror = finishPainting;
+            }
+        }
+
+        // Downloads
+        document.getElementById("downloadJpgBtn")?.addEventListener("click", () => {
+            if (!printableVehicleData) return;
+            const status = document.getElementById("printableQrStatus");
+            if (status) status.textContent = "Rendering high-res card JPG layout...";
+
+            renderHighResStandeeCanvas((canvas) => {
+                canvas.toBlob((blob) => {
+                    if (!blob) return;
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "resqtag-" + (printableVehicleData.vehicleNumber || "card").toLowerCase().replace(/[^a-z0-9]/g, "-") + "-standee.jpg";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    if (status) status.textContent = "✓ High-resolution card JPG downloaded!";
+                }, "image/jpeg", 0.95);
+            });
+        });
+
+        document.getElementById("downloadPngBtn")?.addEventListener("click", () => {
+            if (!printableVehicleData) return;
+            const status = document.getElementById("printableQrStatus");
+            if (status) status.textContent = "Rendering high-res PNG layout...";
+
+            renderHighResStandeeCanvas((canvas) => {
+                canvas.toBlob((blob) => {
+                    if (!blob) return;
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "resqtag-" + (printableVehicleData.vehicleNumber || "card").toLowerCase().replace(/[^a-z0-9]/g, "-") + "-standee.png";
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    URL.revokeObjectURL(url);
+                    if (status) status.textContent = "✓ High-resolution PNG downloaded!";
+                }, "image/png");
+            });
+        });
+
+        document.getElementById("downloadPdfBtn")?.addEventListener("click", () => {
+            if (!printableVehicleData) return;
+            const status = document.getElementById("printableQrStatus");
+            if (status) status.textContent = "Generating print-ready PDF...";
+
+            renderHighResStandeeCanvas((canvas) => {
+                try {
+                    const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : null;
+                    if (jsPDFClass) {
+                        const pdf = new jsPDFClass({
+                            orientation: "portrait",
+                            unit: "mm",
+                            format: "a4"
+                        });
+                        const pdfWidth = 120;
+                        const pdfHeight = (canvas.height / canvas.width) * pdfWidth;
+                        const x = (210 - pdfWidth) / 2;
+                        const y = 30;
+
+                        const imgData = canvas.toDataURL("image/jpeg", 0.95);
+                        pdf.addImage(imgData, "JPEG", x, y, pdfWidth, pdfHeight);
+
+                        pdf.save("resqtag-" + (printableVehicleData.vehicleNumber || "card").toLowerCase().replace(/[^a-z0-9]/g, "-") + "-standee.pdf");
+                        if (status) status.textContent = "✓ Print-ready PDF downloaded!";
+                    } else {
+                        window.print();
+                    }
+                } catch {
+                    window.print();
+                }
+            });
+        });
+
+        document.getElementById("printButton")?.addEventListener("click", () => {
+            if (!printableVehicleData) {
+                alert("Please save your vehicle details or click 'Load demo vehicle' first.");
+                return;
+            }
+            window.print();
+        });
+
+        // ---------------------------------------------------------------------
+        // MODULE 4: QR SCANNER / LOOKUP CODE
+        // ---------------------------------------------------------------------
+        let scannerInstance = null;
+        let isScannerRunning = false;
+
+        function setScannerStatus(msg, isErr = false) {
+            const status = document.getElementById("scanStatus");
+            if (status) {
+                status.textContent = msg;
+                status.classList.toggle("lookup-error", isErr);
+            }
+        }
+
+        async function startScannerCamera() {
+            if (isScannerRunning) return;
+            const startBtn = document.getElementById("startScan");
+            const stopBtn = document.getElementById("stopScan");
+            const placeholder = document.getElementById("cameraPlaceholder");
+
+            try {
+                setScannerStatus("Requesting camera access...");
+                scannerInstance = new Html5Qrcode("reader");
+
+                const config = {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                };
+
+                await scannerInstance.start(
+                    { facingMode: "environment" },
+                    config,
+                    handleScannedResult,
+                    () => {}
+                );
+
+                isScannerRunning = true;
+                if (startBtn) startBtn.disabled = true;
+                if (stopBtn) stopBtn.disabled = false;
+                if (placeholder) placeholder.style.display = "none";
+                setScannerStatus("Camera active. Point at any ResQTag QR code.");
+            } catch (err) {
+                setScannerStatus("Could not access camera: " + (err.message || err), true);
+            }
+        }
+
+        async function stopScannerCamera() {
+            if (scannerInstance && isScannerRunning) {
+                try {
+                    await scannerInstance.stop();
+                } catch {}
+            }
+            isScannerRunning = false;
+            const startBtn = document.getElementById("startScan");
+            const stopBtn = document.getElementById("stopScan");
+            const placeholder = document.getElementById("cameraPlaceholder");
+            if (startBtn) startBtn.disabled = false;
+            if (stopBtn) stopBtn.disabled = true;
+            if (placeholder) placeholder.style.display = "block";
+            setScannerStatus("Camera stopped.");
+        }
+
+        function handleScannedResult(decodedText) {
+            stopScannerCamera();
+            setScannerStatus("QR Code detected! Processing emergency information...");
+
+            // 1. Instant emergency plain text card
+            if (decodedText && (decodedText.includes("RESQTAG") || decodedText.includes("EMERGENCY"))) {
+                const profile = typeof parseEmergencyTextToProfile === "function" ? parseEmergencyTextToProfile(decodedText) : null;
+                if (profile) {
+                    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(profile))));
+                    switchModule("report", { data: encoded });
+                    return;
+                }
+            }
+
+            // 2. vCard 3.0
+            if (decodedText && decodedText.includes("BEGIN:VCARD")) {
+                const profile = typeof parseVCardToProfile === "function" ? parseVCardToProfile(decodedText) : null;
+                if (profile) {
+                    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(profile))));
+                    switchModule("report", { data: encoded });
+                    return;
+                }
+            }
+
+            // 3. Web URL
+            try {
+                const u = new URL(decodedText);
+                const hashData = u.hash.includes("data=") ? u.hash.split("data=")[1] : "";
+                if (hashData) {
+                    switchModule("report", { data: hashData });
+                    return;
+                }
+            } catch {}
+
+            setScannerStatus("Scanned QR code: " + decodedText.slice(0, 100));
+        }
+
+        document.getElementById("startScan")?.addEventListener("click", startScannerCamera);
+        document.getElementById("stopScan")?.addEventListener("click", stopScannerCamera);
+
+        document.getElementById("qrImage")?.addEventListener("change", async (event) => {
+            const file = event.target.files?.[0];
+            if (!file) return;
+
+            setScannerStatus("Scanning selected image file...");
+            const tempScanner = new Html5Qrcode("reader");
+            try {
+                const result = await tempScanner.scanFile(file, true);
+                handleScannedResult(result);
+            } catch (e) {
+                setScannerStatus("No valid QR code found in the uploaded image.", true);
+            }
+        });
+
+        // ---------------------------------------------------------------------
+        // MODULE 5: EMERGENCY INCIDENT REPORT CODE
+        // ---------------------------------------------------------------------
+        let currentReportProfile = null;
+
+        function safeDecodeBase64Json(encoded) {
+            if (!encoded) return null;
+            try {
+                let clean = decodeURIComponent(encoded).trim().replace(/-/g, "+").replace(/_/g, "/");
+                while (clean.length % 4 !== 0) {
+                    clean += "=";
+                }
+                const binary = atob(clean);
+                const bytes = Uint8Array.from(binary, character => character.charCodeAt(0));
+                return JSON.parse(new TextDecoder().decode(bytes));
+            } catch (err1) {
+                try {
+                    return JSON.parse(decodeURIComponent(escape(atob(encoded))));
+                } catch (err2) {
+                    console.warn("[ResQTag Report] Failed to decode profile JSON:", err1, err2);
+                    return null;
+                }
+            }
+        }
+
+        async function refreshReportModule(params = null) {
+            const reportMessage = document.getElementById("reportMessage");
+            const reportContent = document.getElementById("reportContent");
+            const vehicleDetails = document.getElementById("vehicleDetails");
+            const ownerDetails = document.getElementById("ownerDetails");
+            const emergencyContacts = document.getElementById("emergencyContacts");
+            const contactCount = document.getElementById("contactCount");
+
+            if (!reportContent) return;
+
+            // Try decoding profile from params or hash
+            let profile = null;
+            let encoded = params?.data || null;
+            let vNumber = params?.v || null;
+
+            if (!encoded || !vNumber) {
+                const searchParams = new URLSearchParams(window.location.search);
+                if (!encoded) encoded = searchParams.get("data");
+                if (!vNumber) vNumber = searchParams.get("v");
+
+                const hash = window.location.hash.slice(1);
+                const hashParams = new URLSearchParams(hash.replace(/^[^&]*&?/, ""));
+                if (!encoded) encoded = hashParams.get("data");
+                if (!vNumber) vNumber = hashParams.get("v");
+            }
+
+            if (encoded) {
+                profile = safeDecodeBase64Json(encoded);
+            }
+
+            // If profile couldn't be decoded from data, lookup via vehicle number from cloud or local registry
+            if ((!profile || !profile.vehicleNumber) && vNumber) {
+                if (typeof getVehicleFromFirebase === "function") {
+                    try {
+                        const cloudP = await getVehicleFromFirebase(vNumber);
+                        if (cloudP) profile = cloudP;
+                    } catch {}
+                }
+                if (!profile) {
+                    try {
+                        const stored = localStorage.getItem("resqtagVehicles");
+                        if (stored) {
+                            const list = JSON.parse(stored);
+                            profile = list.find(v => v.vehicleNumber.toUpperCase() === vNumber.toUpperCase());
+                        }
+                    } catch {}
+                }
+            }
+
+            // Fallback: Read saved profile from browser
+            if (!profile) {
+                profile = readSavedProfileForPrint();
+            }
+
+            if (!profile || !profile.vehicleNumber) {
+                if (reportMessage) {
+                    reportMessage.innerHTML = '<div class="report-alert" role="alert">No vehicle profile found. Please register your vehicle in the Dashboard or scan a valid ResQTag code.</div>';
+                }
+                reportContent.hidden = true;
+                return;
+            }
+
+            if (reportMessage) reportMessage.replaceChildren();
+            reportContent.hidden = false;
+            currentReportProfile = profile;
+
+            // Render Contacts (ICE) at top
+            if (emergencyContacts) {
+                emergencyContacts.replaceChildren();
+                const contacts = Array.isArray(profile.contacts) ? profile.contacts : [];
+
+                if (contactCount) {
+                    contactCount.textContent = contacts.length > 0
+                        ? contacts.length + " emergency contact" + (contacts.length === 1 ? "" : "s") + " registered"
+                        : "No secondary emergency contacts registered.";
+                }
+
+                if (contacts.length === 0) {
+                    const empty = document.createElement("p");
+                    empty.className = "report-empty";
+                    empty.textContent = "No emergency contacts listed for this vehicle.";
+                    emergencyContacts.appendChild(empty);
+                } else {
+                    contacts.forEach((contact, idx) => {
+                        const card = document.createElement("div");
+                        card.className = "report-contact";
+
+                        const info = document.createElement("div");
+                        info.className = "report-contact-info";
+
+                        const name = document.createElement("strong");
+                        name.textContent = (contact.name || ("Contact " + (idx + 1))) + " (ICE " + (idx + 1) + ")";
+                        const phone = document.createElement("span");
+                        phone.textContent = contact.phone || "No phone listed";
+
+                        info.append(name, phone);
+
+                        const actions = document.createElement("div");
+                        actions.className = "report-contact-actions";
+
+                        if (contact.phone) {
+                            const callLink = document.createElement("a");
+                            callLink.className = "report-action report-action-primary";
+                            callLink.href = "tel:" + contact.phone.replace(/\s+/g, "");
+                            callLink.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg> Call ' + (contact.name ? contact.name.split(" ")[0] : "Contact");
+                            actions.appendChild(callLink);
+
+                            const waDigits = contact.phone.replace(/\D/g, "");
+                            if (waDigits.length >= 10 && waDigits.length <= 15) {
+                                const waLink = document.createElement("a");
+                                waLink.className = "report-action report-action-whatsapp";
+                                waLink.href = "https://wa.me/" + waDigits;
+                                waLink.target = "_self";
+                                waLink.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> WhatsApp';
+                                actions.appendChild(waLink);
+                            }
+                        }
+
+                        card.append(info, actions);
+                        emergencyContacts.appendChild(card);
+                    });
+                }
+            }
+
+            // Render Vehicle Details
+            if (vehicleDetails) {
+                vehicleDetails.replaceChildren();
+
+                const vNumCard = document.createElement("div");
+                vNumCard.className = "report-detail report-vehicle-number";
+                vNumCard.innerHTML = "<span>Registration Number</span><strong>" + (profile.vehicleNumber || "").toUpperCase() + "</strong>";
+                vehicleDetails.appendChild(vNumCard);
+
+                const fields = [
+                    { label: "Model", value: profile.vehicleModel },
+                    { label: "Vehicle Type", value: profile.vehicleType },
+                    { label: "Color", value: profile.vehicleColor }
+                ];
+
+                fields.forEach(f => {
+                    if (f.value) {
+                        const c = document.createElement("div");
+                        c.className = "report-detail";
+                        c.innerHTML = "<span>" + f.label + "</span><strong>" + f.value + "</strong>";
+                        vehicleDetails.appendChild(c);
+                    }
+                });
+            }
+
+            // Render Owner Details
+            if (ownerDetails) {
+                ownerDetails.replaceChildren();
+                const oName = document.createElement("div");
+                oName.className = "report-detail";
+                oName.innerHTML = "<span>Owner Name</span><strong>" + (profile.ownerName || "Not provided") + "</strong>";
+                ownerDetails.appendChild(oName);
+
+                const oPhone = document.createElement("div");
+                oPhone.className = "report-detail";
+                oPhone.innerHTML = "<span>Owner Phone</span><strong>" + (profile.ownerPhone || "Not provided") + "</strong>";
+                ownerDetails.appendChild(oPhone);
+
+                if (profile.ownerPhone) {
+                    const oAction = document.createElement("div");
+                    oAction.className = "report-detail";
+                    oAction.style.gridColumn = "1 / -1";
+                    oAction.style.display = "flex";
+                    oAction.style.gap = "10px";
+                    oAction.style.alignItems = "center";
+                    oAction.style.flexWrap = "wrap";
+
+                    const cBtn = document.createElement("a");
+                    cBtn.className = "report-action report-action-primary";
+                    cBtn.href = "tel:" + profile.ownerPhone.replace(/\s+/g, "");
+                    cBtn.innerHTML = "📞 Call Owner Direct";
+                    oAction.appendChild(cBtn);
+
+                    const digits = profile.ownerPhone.replace(/\D/g, "");
+                    if (digits.length >= 10 && digits.length <= 15) {
+                        const waBtn = document.createElement("a");
+                        waBtn.className = "report-action report-action-whatsapp";
+                        waBtn.href = "https://wa.me/" + digits;
+                        waBtn.target = "_self";
+                        waBtn.innerHTML = "💬 WhatsApp Owner";
+                        oAction.appendChild(waBtn);
+                    }
+                    ownerDetails.appendChild(oAction);
+                }
+            }
+        }
+
+        // Location sharing button
+        document.getElementById("shareLocationBtn")?.addEventListener("click", () => {
+            const locationMsg = document.getElementById("locationMessage");
+            if (!navigator.geolocation) {
+                if (locationMsg) locationMsg.textContent = "Location services are not available on this device.";
+                return;
+            }
+            if (locationMsg) locationMsg.textContent = "Obtaining current location...";
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const mapUrl = "https://maps.google.com/?q=" + lat + "," + lng;
+                    const digits = (currentReportProfile?.ownerPhone || "").replace(/\D/g, "");
+                    const msg = "I found your vehicle and am assisting. My location: " + mapUrl;
+
+                    if (digits.length >= 10 && digits.length <= 15) {
+                        window.location.href = "https://wa.me/" + digits + "?text=" + encodeURIComponent(msg);
+                        if (locationMsg) locationMsg.textContent = "Location ready to share with the owner.";
+                    } else {
+                        if (locationMsg) locationMsg.textContent = "Your location: " + mapUrl;
+                    }
+                },
+                () => {
+                    if (locationMsg) locationMsg.textContent = "Location could not be accessed.";
+                },
+                { enableHighAccuracy: true, timeout: 10000 }
+            );
+        });
+
+        // ---------------------------------------------------------------------
+        // MODULE 6: ADMIN CODE (RESTRICTED ACCESS CONTROL)
+        // ---------------------------------------------------------------------
+        const ADMIN_DEFAULT_PASSCODE = "admin123";
+
+        function isAdminAuthenticated() {
+            if (typeof isDeveloperAdmin === "function") {
+                return isDeveloperAdmin();
+            }
+            return sessionStorage.getItem("resqtag_admin_authenticated") === "true";
+        }
+
+        function updateAdminTabIcon() {
+            const icon = document.getElementById("adminTabIcon");
+            if (icon) {
+                icon.textContent = isAdminAuthenticated() ? "👑" : "🔒";
+            }
+        }
+
+        function updateAdminAuthUI() {
+            const blocked = document.getElementById("adminRegularUserBlocked");
+            const gate = document.getElementById("adminAuthGate");
+            const authView = document.getElementById("adminAuthorizedView");
+            const errBox = document.getElementById("adminAuthError");
+            updateAdminTabIcon();
+
+            const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+            const isDev = typeof isDeveloperAdmin === "function" ? isDeveloperAdmin() : false;
+
+            if (isDev) {
+                // Developer Admin is logged in: show full master console
+                if (blocked) blocked.style.display = "none";
+                if (gate) gate.style.display = "none";
+                if (authView) authView.style.display = "block";
+            } else if (user && !isDev) {
+                // Regular vehicle owner logged in: STRICTLY BLOCK ACCESS
+                if (blocked) blocked.style.display = "block";
+                if (gate) gate.style.display = "none";
+                if (authView) authView.style.display = "none";
+            } else {
+                // Guest / Not logged in: show developer passcode gate
+                if (blocked) blocked.style.display = "none";
+                if (gate) gate.style.display = "flex";
+                if (authView) authView.style.display = "none";
+                if (errBox) errBox.style.display = "none";
+                const passInput = document.getElementById("adminPasscodeInput");
+                if (passInput) {
+                    passInput.value = "";
+                    setTimeout(() => passInput.focus(), 80);
+                }
+            }
+        }
+
+        function unlockAdminConsole(passcode) {
+            const trimmed = String(passcode || "").trim();
+            const valid = [
+                ADMIN_DEFAULT_PASSCODE,
+                "developer123",
+                "admin",
+                "9999",
+                (localStorage.getItem("resqtag_admin_passcode") || "").trim()
+            ].filter(Boolean);
+
+            if (valid.includes(trimmed)) {
+                const session = {
+                    id: "dev_super_admin",
+                    name: "Developer Admin",
+                    email: "admin@resqtag.com",
+                    phone: "9999999999",
+                    role: "developer_admin",
+                    isDeveloper: true,
+                    loginAt: new Date().toISOString()
+                };
+                sessionStorage.setItem("resqtag_admin_authenticated", "true");
+                sessionStorage.setItem("resqtag_current_session", JSON.stringify(session));
+                updateAuthNavbarUI();
+                updateAdminAuthUI();
+                refreshAdminModule();
+                return true;
+            }
+            return false;
+        }
+
+        function lockAdminConsole() {
+            sessionStorage.removeItem("resqtag_admin_authenticated");
+            const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+            if (user && user.isDeveloper) {
+                if (typeof logoutUser === "function") logoutUser();
+            }
+            updateAuthNavbarUI();
+            updateAdminAuthUI();
+            switchModule("home");
+        }
+
+        // Setup Admin login form listeners
+        const adminLoginForm = document.getElementById("adminLoginForm");
+        const adminPasscodeInput = document.getElementById("adminPasscodeInput");
+        const adminAuthError = document.getElementById("adminAuthError");
+        const togglePasscodeBtn = document.getElementById("togglePasscodeBtn");
+
+        if (togglePasscodeBtn && adminPasscodeInput) {
+            togglePasscodeBtn.addEventListener("click", () => {
+                const isPassword = adminPasscodeInput.type === "password";
+                adminPasscodeInput.type = isPassword ? "text" : "password";
+                togglePasscodeBtn.textContent = isPassword ? "🙈" : "👁️";
+            });
+        }
+
+        if (adminLoginForm) {
+            adminLoginForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const code = adminPasscodeInput ? adminPasscodeInput.value : "";
+                if (unlockAdminConsole(code)) {
+                    if (adminAuthError) adminAuthError.style.display = "none";
+                } else {
+                    if (adminAuthError) {
+                        adminAuthError.textContent = "Incorrect developer passcode. Enter 'admin123' to unlock.";
+                        adminAuthError.style.display = "block";
+                    }
+                    if (adminPasscodeInput) {
+                        adminPasscodeInput.classList.add("is-invalid");
+                        adminPasscodeInput.select();
+                        setTimeout(() => adminPasscodeInput.classList.remove("is-invalid"), 600);
+                    }
+                }
+            });
+        }
+
+        window.makeActiveAndShowQr = function(vNum) {
+            try {
+                const stored = localStorage.getItem("resqtagVehicles");
+                if (stored) {
+                    const list = JSON.parse(stored);
+                    const found = list.find(v => v.vehicleNumber.toUpperCase() === String(vNum).toUpperCase());
+                    if (found) localStorage.setItem("resqtagVehicle", JSON.stringify(found));
+                }
+            } catch {}
+            switchModule("printable-qr");
+        };
+
+        window.makeActiveAndEdit = function(vNum) {
+            try {
+                const stored = localStorage.getItem("resqtagVehicles");
+                if (stored) {
+                    const list = JSON.parse(stored);
+                    const found = list.find(v => v.vehicleNumber.toUpperCase() === String(vNum).toUpperCase());
+                    if (found) localStorage.setItem("resqtagVehicle", JSON.stringify(found));
+                }
+            } catch {}
+            switchModule("dashboard");
+            loadSavedProfileIntoForm();
+        };
+
+        window.handleAdminDeleteUser = async function(userId, userName) {
+            if (!window.confirm("Are you sure you want to delete the user account for '" + userName + "'?")) {
+                return;
+            }
+            try {
+                if (typeof adminDeleteUser === "function") {
+                    await adminDeleteUser(userId);
+                    refreshAdminModule();
+                }
+            } catch (err) {
+                alert(err.message || "Unable to delete user.");
+            }
+        };
+
+        async function refreshAdminModule() {
+            if (!isAdminAuthenticated()) return;
+
+            const totalUsersEl = document.getElementById("adminTotalUsers");
+            const totalVehiclesEl = document.getElementById("adminTotalVehicles");
+            const totalContactsEl = document.getElementById("adminTotalContacts");
+            const dbStatusEl = document.getElementById("adminDatabaseStatus");
+            const dbDescEl = document.getElementById("adminDatabaseDesc");
+            const usersTbody = document.getElementById("adminUsersTableBody");
+            const tbody = document.getElementById("adminRecordsTableBody");
+
+            // 1. Update Registered Users Directory (Developer Admin Inspection)
+            let userList = [];
+            try {
+                if (typeof getAdminUserDirectory === "function") {
+                    userList = await getAdminUserDirectory();
+                } else if (typeof getStoredUsers === "function") {
+                    userList = getStoredUsers();
+                }
+            } catch {
+                if (typeof getStoredUsers === "function") userList = getStoredUsers();
+            }
+
+            if (totalUsersEl) totalUsersEl.textContent = String(userList.length);
+
+            if (usersTbody) {
+                usersTbody.replaceChildren();
+                if (userList.length === 0) {
+                    const tr = document.createElement("tr");
+                    tr.innerHTML = '<td colspan="6" class="empty-table">No user accounts registered yet. Use "Sign In / Register" in the top bar to test registration.</td>';
+                    usersTbody.appendChild(tr);
+                } else {
+                    userList.forEach(u => {
+                        const tr = document.createElement("tr");
+                        const joined = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "Recent";
+                        const isDevUser = u.role === "developer_admin" || u.isDeveloper;
+
+                        tr.innerHTML = `
+                            <td>
+                                <span class="table-primary">${u.name || "User"}</span>
+                                <span class="table-secondary">ID: ${u.id || "N/A"}</span>
+                            </td>
+                            <td><span class="table-primary">${u.email || "N/A"}</span></td>
+                            <td><span class="table-primary">${u.phone || "N/A"}</span></td>
+                            <td>
+                                <span class="demo-badge" style="${isDevUser ? 'background: #fef3c7; color: #92400e; border-color: #fde68a;' : 'background: #e8f4ef; color: #176b5b; border-color: #c9e3d8;'}">
+                                    ${isDevUser ? '👑 Developer' : '👤 Owner'}
+                                </span>
+                            </td>
+                            <td><span class="table-secondary">${joined}</span></td>
+                            <td>
+                                ${!isDevUser ? `<button type="button" class="table-action" style="color: #dc2626;" onclick="handleAdminDeleteUser('${u.id}', '${u.name}')">Delete</button>` : '<span class="table-secondary">Protected</span>'}
+                            </td>
+                        `;
+                        usersTbody.appendChild(tr);
+                    });
+                }
+            }
+
+            // 2. Update Cloud Database Connection Status
+            if (typeof getFirebaseStatus === "function") {
+                const fbStatus = getFirebaseStatus();
+                if (dbStatusEl) {
+                    if (fbStatus.configured) {
+                        dbStatusEl.textContent = "🔥 Cloud Live";
+                        dbStatusEl.style.color = "#16a34a";
+                    } else {
+                        dbStatusEl.textContent = "Local Mode";
+                        dbStatusEl.style.color = "#d97706";
+                    }
+                }
+                if (dbDescEl) {
+                    dbDescEl.textContent = fbStatus.message;
+                }
+            }
+
+            // 3. Update Vehicle Records
+            let vehicles = [];
+            try {
+                const stored = localStorage.getItem("resqtagVehicles");
+                if (stored) vehicles = JSON.parse(stored);
+            } catch {}
+
+            // Load from Firebase Cloud Firestore if configured
+            if (typeof getAllVehiclesFromFirebase === "function" && typeof isFirebaseConfigured === "function" && isFirebaseConfigured()) {
+                try {
+                    const cloudVehicles = await getAllVehiclesFromFirebase();
+                    if (Array.isArray(cloudVehicles) && cloudVehicles.length > 0) {
+                        cloudVehicles.forEach(cv => {
+                            if (!vehicles.some(v => v.vehicleNumber.toUpperCase() === cv.vehicleNumber.toUpperCase())) {
+                                vehicles.push(cv);
+                            }
+                        });
+                    }
+                } catch (err) {
+                    console.warn("[Admin] Cloud vehicle fetch notice:", err);
+                }
+            }
+
+            const activeProfile = readSavedProfileForPrint();
+            if (activeProfile && activeProfile.vehicleNumber) {
+                if (!Array.isArray(vehicles) || vehicles.length === 0) {
+                    vehicles = [activeProfile];
+                } else if (!vehicles.some(v => v.vehicleNumber.toUpperCase() === activeProfile.vehicleNumber.toUpperCase())) {
+                    vehicles.unshift(activeProfile);
+                }
+            }
+
+            if (!Array.isArray(vehicles)) vehicles = [];
+
+            let totalContacts = 0;
+            vehicles.forEach(v => {
+                if (Array.isArray(v.contacts)) totalContacts += v.contacts.length;
+            });
+
+            if (totalVehiclesEl) totalVehiclesEl.textContent = String(vehicles.length);
+            if (totalContactsEl) totalContactsEl.textContent = String(totalContacts);
+
+            if (!tbody) return;
+            tbody.replaceChildren();
+
+            if (vehicles.length === 0) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = '<td colspan="5" class="empty-table">No vehicle profiles saved yet. Use the Vehicle Dashboard to register one.</td>';
+                tbody.appendChild(tr);
+                return;
+            }
+
+            vehicles.forEach((profile) => {
+                const tr = document.createElement("tr");
+
+                const tdVeh = document.createElement("td");
+                tdVeh.innerHTML = '<span class="table-primary">' + profile.vehicleNumber.toUpperCase() + '</span><span class="table-secondary">' + ([profile.vehicleModel, profile.vehicleColor, profile.vehicleType].filter(Boolean).join(" · ") || "Vehicle") + '</span>';
+
+                const tdOwn = document.createElement("td");
+                tdOwn.innerHTML = '<span class="table-primary">' + (profile.ownerName || "Owner") + '</span><span class="table-secondary">' + (profile.ownerPhone || "No phone") + '</span>';
+
+                const tdCon = document.createElement("td");
+                const cList = (profile.contacts || []).map(c => (c.name || "Contact") + " (" + c.phone + ")").join(", ");
+                tdCon.textContent = cList || "None listed";
+
+                const tdStat = document.createElement("td");
+                const isActive = activeProfile && activeProfile.vehicleNumber.toUpperCase() === profile.vehicleNumber.toUpperCase();
+                tdStat.innerHTML = isActive
+                    ? '<span class="demo-badge" style="background: #e8f4ef; color: #176b5b; border-color: #c9e3d8;">✓ Active</span>'
+                    : '<span class="demo-badge" style="background: #f1f5f9; color: #475569; border-color: #cbd5e1;">Archived</span>';
+
+                const tdAct = document.createElement("td");
+                tdAct.innerHTML = `
+                    <button type="button" class="table-action" onclick="makeActiveAndShowQr('${profile.vehicleNumber}')">View QR</button>
+                    <button type="button" class="table-action" onclick="makeActiveAndEdit('${profile.vehicleNumber}')" style="margin-left: 6px;">Edit</button>
+                `;
+
+                tr.append(tdVeh, tdOwn, tdCon, tdStat, tdAct);
+                tbody.appendChild(tr);
+            });
+        }
+
+        // =====================================================================
+        // AUTHENTICATION & USER PROFILE CONTROLLER
+        // =====================================================================
+        function updateAuthNavbarUI() {
+            const user = typeof getCurrentUser === "function" ? getCurrentUser() : null;
+            const loggedOutBox = document.getElementById("navUserLoggedOut");
+            const loggedInBox = document.getElementById("navUserLoggedIn");
+            const navAdminTab = document.getElementById("navAdminTab");
+            const menuDevAdminItem = document.getElementById("menuDevAdminItem");
+
+            const isDev = typeof isDeveloperAdmin === "function" ? isDeveloperAdmin() : false;
+
+            if (user) {
+                if (loggedOutBox) loggedOutBox.style.display = "none";
+                if (loggedInBox) loggedInBox.style.display = "block";
+
+                const pillBtn = document.getElementById("userMenuToggleBtn");
+                const avatarEl = document.getElementById("navUserAvatar");
+                const nameEl = document.getElementById("navUserName");
+                const dropName = document.getElementById("menuDropdownName");
+                const dropEmail = document.getElementById("menuDropdownEmail");
+                const dropBadge = document.getElementById("menuDropdownRoleBadge");
+
+                if (isDev) {
+                    if (pillBtn) pillBtn.classList.add("is-dev");
+                    if (avatarEl) avatarEl.textContent = "👑";
+                    if (nameEl) nameEl.textContent = "Developer Admin";
+                    if (dropName) dropName.textContent = "Developer Admin";
+                    if (dropEmail) dropEmail.textContent = user.email || "admin@resqtag.com";
+                    if (dropBadge) {
+                        dropBadge.textContent = "Developer Master";
+                        dropBadge.className = "user-role-badge badge-dev";
+                    }
+                    if (menuDevAdminItem) menuDevAdminItem.style.display = "block";
+                    if (navAdminTab) navAdminTab.style.display = "inline-flex";
+                } else {
+                    if (pillBtn) pillBtn.classList.remove("is-dev");
+                    const initial = (user.name || "U").trim().charAt(0).toUpperCase();
+                    if (avatarEl) avatarEl.textContent = initial || "U";
+                    const shortName = user.name ? user.name.split(" ")[0] : "Account";
+                    if (nameEl) nameEl.textContent = shortName;
+                    if (dropName) dropName.textContent = user.name || "User";
+                    if (dropEmail) dropEmail.textContent = user.email || "";
+                    if (dropBadge) {
+                        dropBadge.textContent = "Vehicle Owner";
+                        dropBadge.className = "user-role-badge badge-user";
+                    }
+                    if (menuDevAdminItem) menuDevAdminItem.style.display = "none";
+                    if (navAdminTab) navAdminTab.style.display = "none";
+                }
+            } else {
+                if (loggedOutBox) loggedOutBox.style.display = "flex";
+                if (loggedInBox) loggedInBox.style.display = "none";
+                if (navAdminTab) navAdminTab.style.display = "none";
+                if (menuDevAdminItem) menuDevAdminItem.style.display = "none";
+            }
+        }
+
+        function toggleUserDropdown(event) {
+            if (event) event.stopPropagation();
+            const menu = document.getElementById("userDropdownMenu");
+            const btn = document.getElementById("userMenuToggleBtn");
+            if (!menu) return;
+            const isOpen = menu.classList.contains("is-open");
+            if (isOpen) {
+                menu.classList.remove("is-open");
+                btn?.classList.remove("is-open");
+                btn?.setAttribute("aria-expanded", "false");
+            } else {
+                menu.classList.add("is-open");
+                btn?.classList.add("is-open");
+                btn?.setAttribute("aria-expanded", "true");
+            }
+        }
+
+        function closeUserDropdown() {
+            const menu = document.getElementById("userDropdownMenu");
+            const btn = document.getElementById("userMenuToggleBtn");
+            if (menu) menu.classList.remove("is-open");
+            if (btn) {
+                btn.classList.remove("is-open");
+                btn.setAttribute("aria-expanded", "false");
+            }
+        }
+
+        window.addEventListener("click", (e) => {
+            const wrapper = document.querySelector(".user-menu-wrapper");
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeUserDropdown();
+            }
+        });
+
+        function openAuthModal(tab = "signin") {
+            const overlay = document.getElementById("authModalOverlay");
+            if (overlay) {
+                overlay.classList.add("is-active");
+                overlay.setAttribute("aria-hidden", "false");
+                setAuthTab(tab);
+                clearAuthAlerts();
+            }
+        }
+
+        function closeAuthModal() {
+            const overlay = document.getElementById("authModalOverlay");
+            if (overlay) {
+                overlay.classList.remove("is-active");
+                overlay.setAttribute("aria-hidden", "true");
+                clearAuthAlerts();
+            }
+        }
+
+        function handleAuthModalBackdropClick(event) {
+            if (event.target.id === "authModalOverlay") {
+                closeAuthModal();
+            }
+        }
+
+        function setAuthTab(tab) {
+            clearAuthAlerts();
+            const btnIn = document.getElementById("tabBtnSignIn");
+            const btnUp = document.getElementById("tabBtnSignUp");
+            const formIn = document.getElementById("authSignInForm");
+            const formUp = document.getElementById("authSignUpForm");
+            const formDev = document.getElementById("authDevForm");
+            const title = document.getElementById("authModalTitle");
+            const sub = document.getElementById("authModalSubtitle");
+
+            if (tab === "signin") {
+                btnIn?.classList.add("is-active");
+                btnIn?.setAttribute("aria-selected", "true");
+                btnUp?.classList.remove("is-active");
+                btnUp?.setAttribute("aria-selected", "false");
+                if (formIn) formIn.style.display = "block";
+                if (formUp) formUp.style.display = "none";
+                if (formDev) formDev.style.display = "none";
+                if (title) title.textContent = "Sign In to ResQTag";
+                if (sub) sub.textContent = "Access your saved vehicles and emergency QR codes";
+                setTimeout(() => document.getElementById("signInIdentifier")?.focus(), 80);
+            } else if (tab === "signup") {
+                btnUp?.classList.add("is-active");
+                btnUp?.setAttribute("aria-selected", "true");
+                btnIn?.classList.remove("is-active");
+                btnIn?.setAttribute("aria-selected", "false");
+                if (formIn) formIn.style.display = "none";
+                if (formUp) formUp.style.display = "block";
+                if (formDev) formDev.style.display = "none";
+                if (title) title.textContent = "Create your Account";
+                if (sub) sub.textContent = "Register once to generate and print your vehicle ResQTag";
+                setTimeout(() => document.getElementById("signUpFullName")?.focus(), 80);
+            } else if (tab === "developer") {
+                btnIn?.classList.remove("is-active");
+                btnUp?.classList.remove("is-active");
+                if (formIn) formIn.style.display = "none";
+                if (formUp) formUp.style.display = "none";
+                if (formDev) formDev.style.display = "block";
+                if (title) title.textContent = "Developer Authentication";
+                if (sub) sub.textContent = "Restricted exclusively to the application developer";
+                setTimeout(() => document.getElementById("devPasscode")?.focus(), 80);
+            }
+        }
+
+        function clearAuthAlerts() {
+            const err = document.getElementById("authAlertError");
+            const succ = document.getElementById("authAlertSuccess");
+            if (err) { err.textContent = ""; err.style.display = "none"; }
+            if (succ) { succ.textContent = ""; succ.style.display = "none"; }
+        }
+
+        function showAuthError(msg) {
+            const err = document.getElementById("authAlertError");
+            const succ = document.getElementById("authAlertSuccess");
+            if (succ) succ.style.display = "none";
+            if (err) {
+                err.textContent = msg;
+                err.style.display = "block";
+            }
+        }
+
+        function showAuthSuccess(msg) {
+            const err = document.getElementById("authAlertError");
+            const succ = document.getElementById("authAlertSuccess");
+            if (err) err.style.display = "none";
+            if (succ) {
+                succ.textContent = msg;
+                succ.style.display = "block";
+            }
+        }
+
+        function togglePasswordVisibility(inputId, btn) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            const isPass = input.type === "password";
+            input.type = isPass ? "text" : "password";
+            if (btn) btn.textContent = isPass ? "🙈" : "👁️";
+        }
+
+        async function handleAuthSignInSubmit(event) {
+            event.preventDefault();
+            clearAuthAlerts();
+            const identifier = document.getElementById("signInIdentifier")?.value;
+            const password = document.getElementById("signInPassword")?.value;
+            const remember = document.getElementById("signInRememberMe")?.checked ?? true;
+            const submitBtn = document.getElementById("signInSubmitBtn");
+
+            try {
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Signing In..."; }
+                const result = await loginUser(identifier, password, remember);
+                showAuthSuccess("Signed in successfully! Welcome " + (result.user.name || "") + ".");
+                setTimeout(() => {
+                    closeAuthModal();
+                    updateAuthNavbarUI();
+                    if (result.isDeveloper) {
+                        switchModule("admin");
+                    } else {
+                        refreshDashboardModule();
+                        if (currentActiveModule === "admin") {
+                            switchModule("dashboard");
+                        }
+                    }
+                }, 400);
+            } catch (err) {
+                showAuthError(err.message || "Sign in failed. Please check your credentials.");
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Sign In to ResQTag"; }
+            }
+        }
+
+        async function handleAuthSignUpSubmit(event) {
+            event.preventDefault();
+            clearAuthAlerts();
+            const name = document.getElementById("signUpFullName")?.value;
+            const email = document.getElementById("signUpEmail")?.value;
+            const phone = document.getElementById("signUpPhone")?.value;
+            const password = document.getElementById("signUpPassword")?.value;
+            const submitBtn = document.getElementById("signUpSubmitBtn");
+
+            try {
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Creating Account..."; }
+                const result = await registerUser({ name, email, phone, password });
+                showAuthSuccess("Account created successfully! Welcome to ResQTag, " + result.user.name + "!");
+
+                // Pre-populate owner name and phone into Dashboard form
+                const oNameInput = document.getElementById("ownerName");
+                const oPhoneInput = document.getElementById("ownerPhone");
+                if (oNameInput && !oNameInput.value) oNameInput.value = result.user.name;
+                if (oPhoneInput && !oPhoneInput.value) oPhoneInput.value = result.user.phone;
+
+                setTimeout(() => {
+                    closeAuthModal();
+                    updateAuthNavbarUI();
+                    refreshDashboardModule();
+                    switchModule("dashboard");
+                }, 500);
+            } catch (err) {
+                showAuthError(err.message || "Registration failed. Please review your input.");
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Create Account & Get Started"; }
+            }
+        }
+
+        async function handleAuthDevSubmit(event) {
+            event.preventDefault();
+            clearAuthAlerts();
+            const passcode = document.getElementById("devPasscode")?.value;
+            const submitBtn = document.getElementById("devSubmitBtn");
+
+            try {
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = "Verifying..."; }
+                const result = await loginUser("admin@resqtag.com", passcode, true);
+                showAuthSuccess("Developer Master Access unlocked!");
+                setTimeout(() => {
+                    closeAuthModal();
+                    updateAuthNavbarUI();
+                    switchModule("admin");
+                }, 400);
+            } catch (err) {
+                showAuthError(err.message || "Invalid developer passcode.");
+            } finally {
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Unlock Developer Console"; }
+            }
+        }
+
+        function handleUserSignOut() {
+            closeUserDropdown();
+            if (typeof logoutUser === "function") {
+                logoutUser();
+            }
+            updateAuthNavbarUI();
+            updateAdminAuthUI();
+            refreshDashboardModule();
+            if (currentActiveModule === "admin") {
+                switchModule("home");
+            }
+        }
+
+        window.addEventListener("resqtag_auth_changed", () => {
+            updateAuthNavbarUI();
+            updateAdminAuthUI();
+        });
+
+        // Initialize App on DOMContentLoaded
+        document.addEventListener("DOMContentLoaded", () => {
+            updateAuthNavbarUI();
+            handleHashRouting();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102b27">
+    <meta name="description" content="Generate and download your ResQTag vehicle emergency QR standee card in JPG, PDF, or print format.">
+    <title>Printable QR Code | ResQTag</title>
+
+    <link rel="icon" href="../assets/svg/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <script>
+        if (!window.location.search.includes("standalone=true")) {
+            var hash = window.location.hash || "";
+            window.location.replace("index.html#printable-qr" + (hash ? ("&" + hash.replace(/^#/, "")) : ""));
+        }
+    </script>
+
+    <style>
+        .qr-page {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 20px 64px;
+        }
+
+        .qr-heading {
+            margin-bottom: 24px;
+        }
+
+        .qr-heading h1 {
+            margin: 6px 0 10px;
+            font-size: clamp(1.8rem, 3.5vw, 2.3rem);
+            color: #102b27;
+        }
+
+        .qr-layout {
+            display: grid;
+            grid-template-columns: minmax(360px, 450px) minmax(360px, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        .qr-panel {
+            background: #ffffff;
+            border: 1px solid #e1e7e5;
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(16, 43, 39, 0.05);
+        }
+
+        .section-divider {
+            height: 1px;
+            background: #e9eeec;
+            margin: 18px 0;
+        }
+
+        /* Profile Summary Pill */
+        .vehicle-badge-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #f2f7f5;
+            border: 1px solid #dbe6e2;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .vehicle-badge-info h4 {
+            margin: 0 0 3px;
+            font-size: 1.05rem;
+            letter-spacing: 0.5px;
+            color: #102b27;
+        }
+
+        .vehicle-badge-info p {
+            margin: 0;
+            font-size: 0.84rem;
+            color: #556863;
+        }
+
+        /* Format selector cards */
+        .option-group-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #4b615b;
+            margin: 0 0 10px;
+        }
+
+        .format-cards {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .format-card {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 14px;
+            border: 1.5px solid #d6e2de;
+            border-radius: 12px;
+            background: #ffffff;
+            cursor: pointer;
+            transition: all 160ms ease;
+        }
+
+        .format-card:hover {
+            border-color: #176b5b;
+            background: #fafdfc;
+        }
+
+        .format-card.is-active {
+            border-color: #176b5b;
+            background: #f0f7f5;
+            box-shadow: 0 0 0 1px #176b5b;
+        }
+
+        .format-card input[type="radio"] {
+            margin-top: 3px;
+            accent-color: #176b5b;
+            cursor: pointer;
+        }
+
+        .format-card-body strong {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.92rem;
+            color: #102b27;
+            margin-bottom: 3px;
+        }
+
+        .format-badge {
+            display: inline-block;
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            padding: 2px 7px;
+            border-radius: 99px;
+            background: #176b5b;
+            color: #ffffff;
+        }
+
+        .format-card-body p {
+            margin: 0;
+            font-size: 0.81rem;
+            line-height: 1.45;
+            color: #5d6e69;
+        }
+
+        /* Web URL Configuration input */
+        .web-url-box {
+            margin-top: 10px;
+            padding: 10px 12px;
+            background: #f9fbfb;
+            border: 1px solid #d8e4e0;
+            border-radius: 10px;
+        }
+
+        .web-url-box label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #102b27;
+            margin-bottom: 5px;
+        }
+
+        .web-url-box input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #ccd8d4;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            box-sizing: border-box;
+        }
+
+        /* Color Theme Options */
+        .theme-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .theme-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 9px 8px;
+            background: #f4f8f6;
+            border: 1.5px solid #d4e2dd;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #27403a;
+            transition: all 150ms ease;
+        }
+
+        .theme-btn:hover {
+            border-color: #176b5b;
+        }
+
+        .theme-btn.is-active {
+            border-color: #102b27;
+            background: #ffffff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        .theme-dot.emerald { background: linear-gradient(135deg, #0d3830, #176b5b); }
+        .theme-dot.purple  { background: linear-gradient(135deg, #441477, #762fc4); }
+        .theme-dot.amber   { background: linear-gradient(135deg, #b45309, #d97706); }
+
+        /* Toggles */
+        .tag-toggles {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #2c423c;
+            cursor: pointer;
+        }
+
+        .toggle-item input[type="checkbox"] {
+            width: 17px;
+            height: 17px;
+            accent-color: #176b5b;
+            cursor: pointer;
+        }
+
+        /* Action Buttons Grid */
+        .download-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 14px;
+        }
+
+        .download-actions-grid .btn-download-primary {
+            grid-column: 1 / -1;
+            padding: 13px 20px;
+            font-size: 0.98rem;
+            background: #176b5b;
+            color: #ffffff !important;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 14px rgba(23, 107, 91, 0.28);
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .download-actions-grid .btn-download-primary:hover {
+            background: #105447;
+            transform: translateY(-1px);
+        }
+
+        .download-actions-grid .btn-download-secondary {
+            padding: 10px 14px;
+            font-size: 0.88rem;
+        }
+
+        .qr-status-text {
+            min-height: 20px;
+            margin-top: 12px;
+            font-size: 0.84rem;
+            color: #176b5b;
+            text-align: center;
+        }
+
+        /* RIGHT COLUMN: The Standee Card Preview */
+        .preview-header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 99px;
+            background: #e8f4ef;
+            color: #176b5b;
+        }
+
+        .preview-badge::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #176b5b;
+        }
+
+        .sheet-container {
+            background: #edf2f0;
+            border-radius: 16px;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 580px;
+            overflow: auto;
+        }
+
+        /* -------------------------------------------------------------
+           THE RESQTAG STANDEE / CARD COMPONENT
+           ------------------------------------------------------------- */
+        .tag-standee {
+            position: relative;
+            width: 100%;
+            max-width: 380px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 16px 38px rgba(16, 43, 39, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+            border: 2px dashed #b9cdc6;
+            box-sizing: border-box;
+            transition: all 200ms ease;
+        }
+
+        /* THEME: Emerald (Default) */
+        .tag-standee.theme-emerald .standee-top-banner {
+            background: linear-gradient(135deg, #092823 0%, #104e43 55%, #176b5b 100%);
+        }
+        .tag-standee.theme-emerald .standee-sub-prompt {
+            background: #e6f4f0;
+            color: #0d463b;
+        }
+        .tag-standee.theme-emerald .corner-bracket {
+            border-color: #176b5b;
+        }
+        .tag-standee.theme-emerald .standee-compat-box {
+            background: #f2f8f6;
+            border-color: #d1e5de;
+        }
+        .tag-standee.theme-emerald .compat-title {
+            color: #176b5b;
+        }
+
+        /* THEME: Royal Purple */
+        .tag-standee.theme-purple .standee-top-banner {
+            background: linear-gradient(135deg, #370e63 0%, #571e94 60%, #762fc4 100%);
+        }
+        .tag-standee.theme-purple .standee-sub-prompt {
+            background: #f3ebfc;
+            color: #511b8b;
+        }
+        .tag-standee.theme-purple .corner-bracket {
+            border-color: #571e94;
+        }
+        .tag-standee.theme-purple .standee-compat-box {
+            background: #faf6fd;
+            border-color: #e5d6fa;
+        }
+        .tag-standee.theme-purple .compat-title {
+            color: #571e94;
+        }
+
+        /* THEME: Safety Amber */
+        .tag-standee.theme-amber .standee-top-banner {
+            background: linear-gradient(135deg, #78350f 0%, #b45309 60%, #d97706 100%);
+        }
+        .tag-standee.theme-amber .standee-sub-prompt {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .tag-standee.theme-amber .corner-bracket {
+            border-color: #b45309;
+        }
+        .tag-standee.theme-amber .standee-compat-box {
+            background: #fffbeb;
+            border-color: #fed7aa;
+        }
+        .tag-standee.theme-amber .compat-title {
+            color: #92400e;
+        }
+
+        /* Top Header Banner */
+        .standee-top-banner {
+            padding: 20px 18px 16px;
+            color: #ffffff;
+            text-align: center;
+            position: relative;
+        }
+
+        .standee-brand-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 6px;
+        }
+
+        .standee-logo-img {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #ffffff;
+            padding: 2px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .standee-brand-title {
+            font-size: 1.45rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            color: #ffffff;
+        }
+
+        .standee-tag-badge {
+            font-size: 0.65rem;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            padding: 3px 7px;
+            border-radius: 99px;
+            background: rgba(255, 255, 255, 0.22);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .standee-header-sub {
+            margin: 0;
+            font-size: 0.74rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        /* Scan Purpose Prompt Strip */
+        .standee-sub-prompt {
+            padding: 8px 12px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            letter-spacing: 0.6px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Central White QR Card with Viewfinder Brackets */
+        .standee-qr-card {
+            position: relative;
+            background: #ffffff;
+            margin: 16px 18px 12px;
+            padding: 16px;
+            border-radius: 14px;
+            border: 1px solid #e5ebe8;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+            text-align: center;
+        }
+
+        /* 4 Corner Scanner Brackets */
+        .corner-bracket {
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-style: solid;
+            border-width: 0;
+            pointer-events: none;
+        }
+        .corner-bracket.tl { top: 8px; left: 8px; border-top-width: 3px; border-left-width: 3px; border-top-left-radius: 6px; }
+        .corner-bracket.tr { top: 8px; right: 8px; border-top-width: 3px; border-right-width: 3px; border-top-right-radius: 6px; }
+        .corner-bracket.bl { bottom: 8px; left: 8px; border-bottom-width: 3px; border-left-width: 3px; border-bottom-left-radius: 6px; }
+        .corner-bracket.br { bottom: 8px; right: 8px; border-bottom-width: 3px; border-right-width: 3px; border-bottom-right-radius: 6px; }
+
+        .standee-qr-wrap {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 6px auto;
+            min-height: 210px;
+        }
+
+        .standee-qr-wrap canvas {
+            display: block;
+            width: 200px !important;
+            height: 200px !important;
+            margin: 0 auto;
+            image-rendering: pixelated;
+        }
+
+        .standee-qr-wrap img {
+            display: block !important;
+            width: 200px !important;
+            height: 200px !important;
+            margin: 0 auto;
+            image-rendering: pixelated;
+        }
+
+        .standee-qr-wrap.has-img canvas {
+            display: none !important;
+        }
+
+        .standee-qr-caption {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            font-size: 0.74rem;
+            color: #637772;
+            margin-top: 6px;
+            font-weight: 600;
+        }
+
+        /* Vehicle Identity Section */
+        .standee-identity-section {
+            padding: 0 18px 14px;
+            text-align: center;
+        }
+
+        /* Realistic Number Plate Pill */
+        .standee-plate {
+            display: inline-flex;
+            align-items: center;
+            background: #ffffff;
+            border: 2px solid #0f172a;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            margin: 0 auto 6px;
+        }
+
+        .plate-ind-strip {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #003399;
+            color: #ffffff;
+            padding: 4px 6px;
+            min-width: 24px;
+        }
+
+        .plate-ind-flag {
+            font-size: 0.65rem;
+            line-height: 1;
+        }
+
+        .plate-ind-code {
+            font-size: 0.62rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .plate-number-text {
+            padding: 5px 12px;
+            font-size: 1.18rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .standee-model-text {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4b635c;
+            margin-bottom: 6px;
+        }
+
+        .standee-pills-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .standee-contact-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            background: #f1f6f4;
+            color: #173831;
+        }
+
+        .standee-contact-pill.ice {
+            background: #fdf2f2;
+            color: #991b1b;
+        }
+
+        /* Bottom Compatible Apps / Cameras */
+        .standee-compat-box {
+            margin: 0 18px 12px;
+            padding: 10px 12px;
+            border: 1px solid #d1e5de;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .compat-title {
+            font-size: 0.68rem;
+            font-weight: 800;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .compat-badges-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 4px;
+        }
+
+        .compat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 99px;
+            background: #ffffff;
+            border: 1px solid #c9dcd6;
+            color: #1c3d35;
+        }
+
+        .compat-subtext {
+            font-size: 0.68rem;
+            color: #637772;
+            margin: 4px 0 0;
+        }
+
+        /* Standee Footer / Cut line */
+        .standee-footer {
+            padding: 8px 18px 12px;
+            border-top: 1px dashed #cadad4;
+            text-align: center;
+        }
+
+        .standee-cut-text {
+            font-size: 0.68rem;
+            color: #6b7f79;
+            font-weight: 500;
+        }
+
+        .standee-watermark {
+            font-size: 0.64rem;
+            color: #96aba5;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-top: 3px;
+        }
+
+        /* PRINT STYLES: Centered Standee on A4 */
+        @media print {
+            @page {
+                size: A4 portrait;
+                margin: 10mm;
+            }
+
+            html,
+            body {
+                background: #ffffff !important;
+                color: #000000 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: auto !important;
+                min-height: auto !important;
+                overflow: visible !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .site-header,
+            .site-footer,
+            .qr-heading,
+            .qr-instructions,
+            .preview-header-bar,
+            .qr-preview-note,
+            .no-print,
+            button,
+            a {
+                display: none !important;
+            }
+
+            .qr-page,
+            .qr-layout,
+            .qr-panel,
+            .qr-result,
+            .sheet-container {
+                display: block !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                width: 100% !important;
+                max-width: none !important;
+            }
+
+            .tag-standee {
+                display: block !important;
+                position: relative !important;
+                width: 95mm !important;
+                max-width: 95mm !important;
+                margin: 15mm auto !important;
+                border: 2px dashed #000000 !important;
+                box-shadow: none !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+
+            .standee-qr-wrap canvas {
+                display: none !important;
+            }
+
+            .standee-qr-wrap img {
+                display: block !important;
+                width: 52mm !important;
+                height: 52mm !important;
+                margin: 0 auto !important;
+                image-rendering: pixelated !important;
+            }
+        }
+
+        @media (max-width: 860px) {
+            .qr-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar container" aria-label="Main navigation">
+            <a class="brand" href="index.html">
+                <img src="../assets/svg/logo.svg" alt="" width="38" height="38">
+                <span>ResQTag</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="qr-lookup.html">QR Lookup</a>
+            </div>
+
+            <a class="button button-secondary nav-cta" href="dashboard.html">
+                Edit vehicle
+            </a>
+        </nav>
+    </header>
+
+    <main class="qr-page">
+        <section class="qr-heading">
+            <span class="eyebrow">VEHICLE EMERGENCY TAG</span>
+            <h1>Download &amp; Print Your ResQTag</h1>
+            <p class="muted">
+                Download a complete emergency vehicle standee card in JPG or PDF, or print directly for your vehicle.
+            </p>
+        </section>
+
+        <section class="qr-layout">
+            <!-- Left Column: Controls & Settings -->
+            <div class="qr-panel qr-instructions">
+                <!-- Empty State -->
+                <div id="emptyState" class="qr-empty" hidden>
+                    <h3>No saved vehicle profile found</h3>
+                    <p>
+                        Save your vehicle and emergency contacts on the Dashboard, or load demo vehicle details to preview and download right away.
+                    </p>
+                    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+                        <a class="button button-primary" href="dashboard.html">
+                            Open dashboard
+                        </a>
+                        <button class="button button-secondary" type="button" id="loadSampleBtn">
+                            Load demo vehicle
+                        </button>
+                    </div>
+                </div>
+
+                <div id="readyState" class="qr-ready" hidden>
+                    <!-- Vehicle Badge Pill -->
+                    <div class="vehicle-badge-card">
+                        <div class="vehicle-badge-info">
+                            <h4 id="badgeVehicleNumber">TS 09 AB 1234</h4>
+                            <p id="badgeVehicleDetails">Vehicle registered</p>
+                        </div>
+                        <a href="dashboard.html" class="button button-secondary" style="padding: 6px 12px; font-size: 0.8rem; min-height: 32px;">
+                            Edit
+                        </a>
+                    </div>
+
+                    <!-- 1. QR Code Scan Destination Format -->
+                    <div class="option-group-title">1. QR Scan Format</div>
+                    <div class="format-cards">
+                        <!-- Format 1: Web Emergency Portal (Default & Recommended) -->
+                        <label class="format-card is-active" id="formatCardWeb">
+                            <input type="radio" name="qrFormat" value="web" checked id="radioWeb">
+                            <div class="format-card-body">
+                                <strong>
+                                    Web Emergency Portal
+                                    <span class="format-badge" style="background: #176b5b; color: #fff;">Recommended</span>
+                                </strong>
+                                <p>
+                                    Opens the interactive ResQTag website emergency interface with contacts, 1-tap direct calling, GPS location, and incident assistance.
+                                </p>
+
+                                <div id="webUrlBox" class="web-url-box" style="display: block;">
+                                    <label for="customWebBase">Scan Destination Web Link:</label>
+                                    <input type="text" id="customWebBase" placeholder="https://infrared-kinda-candidate-rec.trycloudflare.com/frontend/index.html#report">
+                                </div>
+                            </div>
+                        </label>
+
+                        <!-- Format 2: Instant Emergency Card -->
+                        <label class="format-card" id="formatCardText">
+                            <input type="radio" name="qrFormat" value="text" id="radioText">
+                            <div class="format-card-body">
+                                <strong>
+                                    Instant Emergency Card
+                                    <span class="format-badge" style="background: #475569;">Offline Raw Text</span>
+                                </strong>
+                                <p>
+                                    Encodes vehicle &amp; contacts in raw text note (no website interface).
+                                </p>
+                            </div>
+                        </label>
+
+                        <!-- Format 3: vCard Address Book -->
+                        <label class="format-card" id="formatCardVcard">
+                            <input type="radio" name="qrFormat" value="vcard" id="radioVcard">
+                            <div class="format-card-body">
+                                <strong>
+                                    Phone Address Book Card
+                                    <span class="format-badge" style="background: #f1f5f9; color: #475569;">vCard</span>
+                                </strong>
+                                <p>
+                                    Prompts the scanner to save the ICE emergency contact directly into the phone's address book.
+                                </p>
+                            </div>
+                        </label>
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- 2. Standee Card Theme Selection -->
+                    <div class="option-group-title">2. Card Color Theme</div>
+                    <div class="theme-options">
+                        <button type="button" class="theme-btn is-active" data-theme="emerald" id="themeEmeraldBtn">
+                            <span class="theme-dot emerald"></span>
+                            ResQTag Teal
+                        </button>
+
+                        <button type="button" class="theme-btn" data-theme="purple" id="themePurpleBtn">
+                            <span class="theme-dot purple"></span>
+                            Royal Purple
+                        </button>
+
+                        <button type="button" class="theme-btn" data-theme="amber" id="themeAmberBtn">
+                            <span class="theme-dot amber"></span>
+                            Safety Amber
+                        </button>
+                    </div>
+
+                    <!-- 3. Physical Tag Information Toggles -->
+                    <div class="option-group-title">3. Content Displayed on Standee</div>
+                    <div class="tag-toggles">
+                        <label class="toggle-item">
+                            <span>Show emergency contacts (ICE)</span>
+                            <input type="checkbox" id="toggleContacts" checked>
+                        </label>
+
+                        <label class="toggle-item">
+                            <span>Show owner phone on card</span>
+                            <input type="checkbox" id="togglePhone" checked>
+                        </label>
+
+                        <label class="toggle-item">
+                            <span>Show vehicle make &amp; model</span>
+                            <input type="checkbox" id="toggleModel" checked>
+                        </label>
+                    </div>
+
+                    <!-- Action Buttons: Download JPG, PDF, PNG, and Print -->
+                    <div class="download-actions-grid">
+                        <button class="button btn-download-primary" type="button" id="downloadJpgBtn">
+                            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Download Full Card (JPG)
+                        </button>
+
+                        <button class="button button-secondary btn-download-secondary" type="button" id="downloadPdfBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                            Download PDF (A4)
+                        </button>
+
+                        <button class="button button-secondary btn-download-secondary" type="button" id="downloadPngBtn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            Download PNG
+                        </button>
+
+                        <button class="button button-secondary btn-download-secondary" type="button" id="printButton" style="grid-column: 1 / -1;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            Print Standee Card
+                        </button>
+                    </div>
+
+                    <p id="qrStatus" class="qr-status-text" role="status" aria-live="polite"></p>
+                </div>
+            </div>
+
+            <!-- Right Column: Live Standee Card Preview -->
+            <div class="qr-panel qr-result">
+                <div class="preview-header-bar">
+                    <span class="preview-badge" id="previewBadgeText">Vehicle Standee Card Layout</span>
+                    <span style="font-size: 0.82rem; color: #627771;">Full Layout Export Ready</span>
+                </div>
+
+                <div class="sheet-container" id="sheetContainer">
+                    <!-- THE RESQTAG STANDEE / CARD -->
+                    <div class="tag-standee theme-emerald" id="tagStandee">
+                        <!-- Top Header Banner -->
+                        <div class="standee-top-banner">
+                            <div class="standee-brand-row">
+                                <img src="../assets/svg/logo.svg" alt="Logo" class="standee-logo-img">
+                                <span class="standee-brand-title">ResQTag</span>
+                                <span class="standee-tag-badge">EMERGENCY</span>
+                            </div>
+                            <p class="standee-header-sub">VEHICLE SAFETY &amp; RESCUE SYSTEM</p>
+                        </div>
+
+                        <!-- Scan Prompt Strip -->
+                        <div class="standee-sub-prompt">
+                            SCAN FOR EMERGENCY CONTACT &amp; OWNER NOTIFICATION
+                        </div>
+
+                        <!-- Central White QR Card with Viewfinder Brackets -->
+                        <div class="standee-qr-card">
+                            <div class="corner-bracket tl"></div>
+                            <div class="corner-bracket tr"></div>
+                            <div class="corner-bracket bl"></div>
+                            <div class="corner-bracket br"></div>
+
+                            <div class="standee-qr-wrap" id="qrContainer">
+                                <p class="muted">Generating QR code...</p>
+                            </div>
+
+                            <div class="standee-qr-caption">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                Scan with any phone camera or Google Lens
+                            </div>
+                        </div>
+
+                        <!-- Vehicle Identity Section -->
+                        <div class="standee-identity-section">
+                            <!-- Real Number Plate Pill -->
+                            <div class="standee-plate">
+                                <div class="plate-ind-strip">
+                                    <span class="plate-ind-flag">🇮🇳</span>
+                                    <span class="plate-ind-code">IND</span>
+                                </div>
+                                <div class="plate-number-text" id="tagVehicleNumber">
+                                    TS 09 AB 1234
+                                </div>
+                            </div>
+
+                            <div class="standee-model-text" id="tagVehicleModelText">
+                                Maruti Suzuki WagonR · White · Car
+                            </div>
+
+                            <div class="standee-pills-row">
+                                <div class="standee-contact-pill" id="tagPhoneBadge">
+                                    📞 Owner: +91 98765 43210
+                                </div>
+                                <div class="standee-contact-pill ice" id="tagEmergencyBadge">
+                                    🚨 ICE: Jane Doe (+91 98765 01234)
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compatible Cameras Strip -->
+                        <div class="standee-compat-box">
+                            <div class="compat-title">
+                                WORKS WITH ANY CAMERA • NO APP REQUIRED
+                            </div>
+                            <div class="compat-badges-row">
+                                <span class="compat-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                                    Google Lens
+                                </span>
+                                <span class="compat-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"></path></svg>
+                                    iPhone Camera
+                                </span>
+                                <span class="compat-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                                    Android Camera
+                                </span>
+                                <span class="compat-badge">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                    WhatsApp
+                                </span>
+                            </div>
+                            <p class="compat-subtext">Point phone camera to view contacts &amp; call owner</p>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="standee-footer">
+                            <div class="standee-cut-text">
+                                ✂ Cut along border &amp; place on vehicle windshield, dashboard, or visor
+                            </div>
+                            <div class="standee-watermark">
+                                ResQTag Safety System • resqtag.app
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="muted qr-preview-note" style="margin-top: 14px; text-align: center; font-size: 0.85rem;">
+                    💡 Downloading <strong>JPG or PDF</strong> exports the complete standee card layout with branding, number plate, and emergency details.
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <a class="brand footer-brand" href="index.html">
+                <img src="../assets/svg/logo.svg" alt="" width="32" height="32">
+                <span>ResQTag</span>
+            </a>
+            <p class="copyright">
+                © <span id="currentYear"></span> ResQTag
+            </p>
+        </div>
+    </footer>
+
+    <!-- QR Code Library & Local jsPDF with CDN Fallback -->
+    <script src="../assets/js/qrcode.min.js"></script>
+    <script>
+        if (typeof QRCode === "undefined") {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"><\/script>');
+        }
+    </script>
+    <script src="../assets/js/jspdf.umd.min.js"></script>
+    <script>
+        if (typeof window.jspdf === "undefined") {
+            document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"><\/script>');
+        }
+    </script>
+    <script src="../assets/js/storage.js"></script>
+    <script src="../assets/js/qr-scanner.js"></script>
+    <script src="../assets/js/main.js"></script>
+
+    <script>
+        (() => {
+            // UI elements
+            const emptyState = document.getElementById("emptyState");
+            const readyState = document.getElementById("readyState");
+            const badgeVehicleNumber = document.getElementById("badgeVehicleNumber");
+            const badgeVehicleDetails = document.getElementById("badgeVehicleDetails");
+            const tagVehicleNumber = document.getElementById("tagVehicleNumber");
+            const tagVehicleModelText = document.getElementById("tagVehicleModelText");
+            const tagPhoneBadge = document.getElementById("tagPhoneBadge");
+            const tagEmergencyBadge = document.getElementById("tagEmergencyBadge");
+            const qrStatus = document.getElementById("qrStatus");
+
+            const qrContainer = document.getElementById("qrContainer");
+            const tagStandee = document.getElementById("tagStandee");
+
+            // Format controls
+            const radioText = document.getElementById("radioText");
+            const radioWeb = document.getElementById("radioWeb");
+            const radioVcard = document.getElementById("radioVcard");
+            const formatCardText = document.getElementById("formatCardText");
+            const formatCardWeb = document.getElementById("formatCardWeb");
+            const formatCardVcard = document.getElementById("formatCardVcard");
+            const webUrlBox = document.getElementById("webUrlBox");
+            const customWebBase = document.getElementById("customWebBase");
+
+            // Theme buttons
+            const themeEmeraldBtn = document.getElementById("themeEmeraldBtn");
+            const themePurpleBtn = document.getElementById("themePurpleBtn");
+            const themeAmberBtn = document.getElementById("themeAmberBtn");
+
+            // Toggles
+            const toggleContacts = document.getElementById("toggleContacts");
+            const togglePhone = document.getElementById("togglePhone");
+            const toggleModel = document.getElementById("toggleModel");
+
+            // Action Buttons
+            const downloadJpgBtn = document.getElementById("downloadJpgBtn");
+            const downloadPdfBtn = document.getElementById("downloadPdfBtn");
+            const downloadPngBtn = document.getElementById("downloadPngBtn");
+            const printButton = document.getElementById("printButton");
+            const loadSampleBtn = document.getElementById("loadSampleBtn");
+
+            // State
+            let vehicleData = null;
+            let currentQrText = "";
+            let currentTheme = "emerald"; // "emerald" | "purple" | "amber"
+
+            // Default web base url suggestion for mobile devices
+            if (window.location.protocol === "file:") {
+                customWebBase.placeholder = "http://10.0.3.47:3000/frontend/report.html";
+            } else {
+                try {
+                    customWebBase.placeholder = new URL("report.html", window.location.href).href;
+                } catch {}
+            }
+
+            // Theme color tokens for canvas generation
+            const THEME_CONFIG = {
+                emerald: {
+                    bannerStart: "#092823",
+                    bannerMid: "#104e43",
+                    bannerEnd: "#176b5b",
+                    subPromptBg: "#e6f4f0",
+                    subPromptText: "#0d463b",
+                    accent: "#176b5b",
+                    compatBg: "#f2f8f6",
+                    compatBorder: "#d1e5de"
+                },
+                purple: {
+                    bannerStart: "#370e63",
+                    bannerMid: "#571e94",
+                    bannerEnd: "#762fc4",
+                    subPromptBg: "#f3ebfc",
+                    subPromptText: "#511b8b",
+                    accent: "#571e94",
+                    compatBg: "#faf6fd",
+                    compatBorder: "#e5d6fa"
+                },
+                amber: {
+                    bannerStart: "#78350f",
+                    bannerMid: "#b45309",
+                    bannerEnd: "#d97706",
+                    subPromptBg: "#fef3c7",
+                    subPromptText: "#92400e",
+                    accent: "#b45309",
+                    compatBg: "#fffbeb",
+                    compatBorder: "#fed7aa"
+                }
+            };
+
+            // Read saved profile
+            function readSavedProfile() {
+                try {
+                    if (typeof getVehicleProfile === "function") {
+                        const prof = getVehicleProfile();
+                        if (prof && prof.vehicleNumber && prof.ownerName && prof.ownerPhone) {
+                            return prof;
+                        }
+                    }
+                    const raw = localStorage.getItem("resqtagVehicle");
+                    if (!raw) return null;
+                    const data = JSON.parse(raw);
+                    if (!data || !data.ownerName || !data.ownerPhone || !data.vehicleNumber) {
+                        return null;
+                    }
+                    if (!Array.isArray(data.contacts)) data.contacts = [];
+                    return data;
+                } catch {
+                    return null;
+                }
+            }
+
+            // 1. Generate Instant Emergency Plain Text (Recommended & Default)
+            function makeEmergencyTextData(data) {
+                const reg = String(data.vehicleNumber || "VEHICLE").toUpperCase().trim();
+                const ownerName = String(data.ownerName || "Vehicle Owner").trim();
+                const ownerPhone = String(data.ownerPhone || "").trim();
+                const model = String(data.vehicleModel || "").trim();
+                const contacts = Array.isArray(data.contacts) ? data.contacts : [];
+
+                const lines = [
+                    "RESQTAG EMERGENCY CARD",
+                    "VEHICLE: " + reg
+                ];
+
+                if (model) {
+                    lines.push("MODEL: " + model);
+                }
+
+                if (contacts.length > 0) {
+                    lines.push("");
+                    lines.push("EMERGENCY CONTACTS (ICE):");
+                    contacts.forEach((c, idx) => {
+                        const name = c.name ? String(c.name).trim() : ("Contact " + (idx + 1));
+                        const phone = c.phone ? String(c.phone).trim() : "";
+                        if (phone) {
+                            lines.push((idx + 1) + ". " + name + ": " + phone);
+                        }
+                    });
+                }
+
+                if (ownerPhone) {
+                    lines.push("");
+                    lines.push("VEHICLE OWNER:");
+                    lines.push(ownerName + ": " + ownerPhone);
+                }
+
+                lines.push("");
+                lines.push("Tap phone numbers to call instantly.");
+                lines.push("ResQTag Safety System");
+
+                return lines.join("\n");
+            }
+
+            // 2. Generate vCard with Emergency Contact as Primary
+            function makeVCardData(data) {
+                const reg = String(data.vehicleNumber || "VEHICLE").toUpperCase().trim();
+                const ownerName = String(data.ownerName || "Vehicle Owner").trim();
+                const ownerPhone = String(data.ownerPhone || "").trim();
+                const contacts = Array.isArray(data.contacts) ? data.contacts : [];
+
+                const firstContact = contacts.length > 0 ? contacts[0] : null;
+                const firstContactName = firstContact ? (firstContact.name || "Emergency Contact") : ownerName;
+                const firstContactPhone = firstContact ? (firstContact.phone || ownerPhone) : ownerPhone;
+
+                const lines = [
+                    "BEGIN:VCARD",
+                    "VERSION:3.0",
+                    "FN:ICE - " + firstContactName + " (" + reg + ")",
+                    "N:;" + firstContactName + ";;;",
+                    "ORG:ResQTag (" + reg + ")",
+                    "TITLE:Emergency Contact (" + reg + ")"
+                ];
+
+                if (firstContactPhone) {
+                    lines.push("TEL;TYPE=CELL,PREF;X-LABEL=ICE:" + firstContactPhone);
+                }
+
+                for (let i = 1; i < contacts.length; i++) {
+                    const c = contacts[i];
+                    const cName = String(c.name || ("Contact " + (i + 1))).trim();
+                    const cPhone = String(c.phone || "").trim();
+                    if (cPhone) {
+                        lines.push("TEL;TYPE=CELL;X-LABEL=ICE " + (i + 1) + ":" + cPhone);
+                    }
+                }
+
+                if (ownerPhone) {
+                    lines.push("TEL;TYPE=WORK;X-LABEL=Owner:" + ownerPhone);
+                }
+
+                lines.push("NOTE:ResQTag Emergency Contacts for " + reg);
+                lines.push("END:VCARD");
+
+                return lines.join("\r\n");
+            }
+
+            // 3. Generate Web Emergency URL
+            function makeWebEmergencyUrl(data) {
+                let base = customWebBase.value.trim();
+                if (!base) {
+                    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
+                        base = "https://infrared-kinda-candidate-rec.trycloudflare.com/frontend/index.html#report";
+                    } else if (window.location.protocol === "file:") {
+                        base = "https://infrared-kinda-candidate-rec.trycloudflare.com/frontend/index.html#report";
+                    } else {
+                        const path = window.location.pathname.includes("/frontend/")
+                            ? window.location.pathname.replace(/\/[^/]*$/, "/index.html")
+                            : "/frontend/index.html";
+                        base = window.location.origin + path + "#report";
+                    }
+                }
+                base = base.replace(/[?#].*$/, "") + "#report";
+
+                const compactData = {
+                    vehicleNumber: data.vehicleNumber,
+                    ownerName: data.ownerName || "",
+                    ownerPhone: data.ownerPhone || "",
+                    vehicleModel: data.vehicleModel || "",
+                    vehicleType: data.vehicleType || "",
+                    vehicleColor: data.vehicleColor || "",
+                    contacts: Array.isArray(data.contacts) ? data.contacts.map(c => ({
+                        name: String(c.name || "").trim(),
+                        phone: String(c.phone || "").trim()
+                    })).filter(c => c.name && c.phone) : []
+                };
+
+                const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(compactData))));
+                const vNum = encodeURIComponent(String(data.vehicleNumber || "").trim().toUpperCase());
+                return base + "&v=" + vNum + "&data=" + encodeURIComponent(encoded);
+            }
+
+            function getSelectedQrPayload() {
+                if (!vehicleData) return "";
+                if (radioText && radioText.checked) {
+                    return makeEmergencyTextData(vehicleData);
+                }
+                if (radioVcard && radioVcard.checked) {
+                    return makeVCardData(vehicleData);
+                }
+                return makeWebEmergencyUrl(vehicleData);
+            }
+
+            // Update UI
+            function showProfile() {
+                vehicleData = readSavedProfile();
+
+                if (!vehicleData) {
+                    emptyState.hidden = false;
+                    readyState.hidden = true;
+                    return;
+                }
+
+                emptyState.hidden = true;
+                readyState.hidden = false;
+
+                const reg = vehicleData.vehicleNumber.toUpperCase();
+                badgeVehicleNumber.textContent = reg;
+                tagVehicleNumber.textContent = reg;
+
+                const modelParts = [vehicleData.vehicleModel, vehicleData.vehicleColor, vehicleData.vehicleType].filter(Boolean);
+                const modelString = modelParts.join(" · ") || "Vehicle registered";
+                badgeVehicleDetails.textContent = modelString;
+                tagVehicleModelText.textContent = modelString;
+
+                if (vehicleData.ownerPhone) {
+                    tagPhoneBadge.textContent = "📞 Owner: " + vehicleData.ownerPhone;
+                } else {
+                    tagPhoneBadge.style.display = "none";
+                }
+
+                if (vehicleData.contacts && vehicleData.contacts.length > 0) {
+                    const cSummary = vehicleData.contacts
+                        .map((c, i) => (c.name || "Contact " + (i + 1)) + " (" + c.phone + ")")
+                        .join(" · ");
+                    tagEmergencyBadge.textContent = "🚨 ICE: " + cSummary;
+                } else {
+                    tagEmergencyBadge.style.display = "none";
+                }
+
+                updateContentVisibility();
+                generateQr();
+            }
+
+            function updateContentVisibility() {
+                tagVehicleModelText.style.display = toggleModel.checked && vehicleData?.vehicleModel ? "block" : "none";
+                tagPhoneBadge.style.display = togglePhone.checked && vehicleData?.ownerPhone ? "inline-flex" : "none";
+                tagEmergencyBadge.style.display = toggleContacts.checked && vehicleData?.contacts?.length ? "inline-flex" : "none";
+            }
+
+            function setTheme(theme) {
+                currentTheme = theme;
+                tagStandee.className = "tag-standee theme-" + theme;
+                themeEmeraldBtn.classList.toggle("is-active", theme === "emerald");
+                themePurpleBtn.classList.toggle("is-active", theme === "purple");
+                themeAmberBtn.classList.toggle("is-active", theme === "amber");
+            }
+
+            // Generate QR into DOM
+            function generateQr() {
+                if (!vehicleData) return;
+                if (typeof QRCode === "undefined") {
+                    setTimeout(generateQr, 200);
+                    return;
+                }
+
+                currentQrText = getSelectedQrPayload();
+                qrContainer.innerHTML = "";
+                qrContainer.classList.remove("has-img");
+
+                try {
+                    new QRCode(qrContainer, {
+                        text: currentQrText,
+                        width: 480,
+                        height: 480,
+                        colorDark: "#000000",
+                        colorLight: "#ffffff",
+                        correctLevel: QRCode.CorrectLevel.L
+                    });
+                } catch (err) {
+                    console.error("QR render error:", err);
+                }
+
+                // Guarantee img element is painted
+                setTimeout(() => {
+                    const canvas = qrContainer.querySelector("canvas");
+                    const img = qrContainer.querySelector("img");
+                    if (canvas && img) {
+                        if (!img.src || img.src.length < 50) {
+                            try {
+                                img.src = canvas.toDataURL("image/png");
+                            } catch {}
+                        }
+                        if (img.src && img.src.length > 50) {
+                            qrContainer.classList.add("has-img");
+                        }
+                    }
+                }, 60);
+
+                if (radioText && radioText.checked) {
+                    qrStatus.textContent = "✓ Instant Emergency Card Ready — Emergency contacts & 1-tap call show directly on any phone camera without internet";
+                } else if (radioWeb && radioWeb.checked) {
+                    qrStatus.textContent = "✓ Web Emergency Portal Link Ready — Opens interactive emergency page with GPS location sharing";
+                } else {
+                    qrStatus.textContent = "✓ Emergency Contact Card Ready — Prompts smartphone to save ICE contact in address book";
+                }
+            }
+
+            // -----------------------------------------------------------------
+            // HIGH-RESOLUTION CANVAS RENDERER FOR STANDEE CARD LAYOUT
+            // -----------------------------------------------------------------
+            function createStandeeCanvas(callback) {
+                if (!vehicleData) return;
+
+                const W = 1200;
+                const H = 1720;
+                const canvas = document.createElement("canvas");
+                canvas.width = W;
+                canvas.height = H;
+                const ctx = canvas.getContext("2d");
+                const theme = THEME_CONFIG[currentTheme] || THEME_CONFIG.emerald;
+
+                // 1. Outer Background
+                ctx.fillStyle = "#ffffff";
+                ctx.fillRect(0, 0, W, H);
+
+                // Helper: Rounded rectangle
+                function roundRect(x, y, w, h, r, fill, stroke, strokeColor = "#000", lineWidth = 2) {
+                    ctx.beginPath();
+                    ctx.moveTo(x + r, y);
+                    ctx.lineTo(x + w - r, y);
+                    ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+                    ctx.lineTo(x + w - r, y + h);
+                    ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+                    ctx.lineTo(x + r, y + h);
+                    ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+                    ctx.lineTo(x, y + r);
+                    ctx.quadraticCurveTo(x, y, x + r, y);
+                    ctx.closePath();
+                    if (fill) ctx.fill();
+                    if (stroke) {
+                        ctx.lineWidth = lineWidth;
+                        ctx.strokeStyle = strokeColor;
+                        ctx.stroke();
+                    }
+                }
+
+                // 2. Outer Dashed Cut Border
+                ctx.setLineDash([14, 10]);
+                roundRect(16, 16, W - 32, H - 32, 28, false, true, "#b9cdc6", 3);
+                ctx.setLineDash([]); // reset
+
+                // 3. Top Banner Gradient
+                const bannerGrad = ctx.createLinearGradient(0, 20, W, 260);
+                bannerGrad.addColorStop(0, theme.bannerStart);
+                bannerGrad.addColorStop(0.55, theme.bannerMid);
+                bannerGrad.addColorStop(1, theme.bannerEnd);
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(20 + 26, 20);
+                ctx.lineTo(W - 20 - 26, 20);
+                ctx.quadraticCurveTo(W - 20, 20, W - 20, 20 + 26);
+                ctx.lineTo(W - 20, 250);
+                ctx.lineTo(20, 250);
+                ctx.lineTo(20, 20 + 26);
+                ctx.quadraticCurveTo(20, 20, 20 + 26, 20);
+                ctx.closePath();
+                ctx.fillStyle = bannerGrad;
+                ctx.fill();
+                ctx.restore();
+
+                // 4. Header Logo & Title
+                const logoImg = new Image();
+                logoImg.crossOrigin = "anonymous";
+                logoImg.src = "../assets/svg/logo.svg";
+
+                function continueDrawing() {
+                    // Logo circle
+                    ctx.save();
+                    ctx.fillStyle = "#ffffff";
+                    ctx.beginPath();
+                    ctx.arc(380, 115, 42, 0, Math.PI * 2);
+                    ctx.fill();
+                    if (logoImg.complete && logoImg.naturalWidth > 0) {
+                        ctx.drawImage(logoImg, 342, 77, 76, 76);
+                    }
+                    ctx.restore();
+
+                    // Brand Title
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "800 64px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+                    ctx.textAlign = "left";
+                    ctx.fillText("ResQTag", 445, 126);
+
+                    // Badge "EMERGENCY"
+                    roundRect(740, 92, 145, 36, 18, true, true, "rgba(255,255,255,0.4)", 2);
+                    ctx.fillStyle = "rgba(255,255,255,0.25)";
+                    ctx.fill();
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "800 19px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("EMERGENCY", 812, 117);
+
+                    // Subtitle in banner
+                    ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+                    ctx.font = "700 24px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("VEHICLE SAFETY & RESCUE SYSTEM", W / 2, 195);
+
+                    // 5. Scan Purpose Strip
+                    ctx.fillStyle = theme.subPromptBg;
+                    ctx.fillRect(20, 250, W - 40, 54);
+                    ctx.fillStyle = theme.subPromptText;
+                    ctx.font = "800 23px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("SCAN FOR EMERGENCY CONTACT & OWNER NOTIFICATION", W / 2, 285);
+
+                    // 6. Central White QR Card
+                    const cardX = 140;
+                    const cardY = 330;
+                    const cardW = W - 280; // 920px
+                    const cardH = 680;
+
+                    ctx.fillStyle = "#ffffff";
+                    roundRect(cardX, cardY, cardW, cardH, 24, true, true, "#e2ebe7", 2);
+
+                    // Corner Viewfinder Brackets in Theme Accent
+                    const bLen = 48;
+                    const bStroke = 6;
+                    const bPad = 26;
+                    ctx.lineWidth = bStroke;
+                    ctx.strokeStyle = theme.accent;
+                    ctx.lineCap = "round";
+
+                    // TL
+                    ctx.beginPath();
+                    ctx.moveTo(cardX + bPad, cardY + bPad + bLen);
+                    ctx.lineTo(cardX + bPad, cardY + bPad);
+                    ctx.lineTo(cardX + bPad + bLen, cardY + bPad);
+                    ctx.stroke();
+
+                    // TR
+                    ctx.beginPath();
+                    ctx.moveTo(cardX + cardW - bPad - bLen, cardY + bPad);
+                    ctx.lineTo(cardX + cardW - bPad, cardY + bPad);
+                    ctx.lineTo(cardX + cardW - bPad, cardY + bPad + bLen);
+                    ctx.stroke();
+
+                    // BL
+                    ctx.beginPath();
+                    ctx.moveTo(cardX + bPad, cardY + cardH - bPad - bLen);
+                    ctx.lineTo(cardX + bPad, cardY + cardH - bPad);
+                    ctx.lineTo(cardX + bPad + bLen, cardY + cardH - bPad);
+                    ctx.stroke();
+
+                    // BR
+                    ctx.beginPath();
+                    ctx.moveTo(cardX + cardW - bPad - bLen, cardY + cardH - bPad);
+                    ctx.lineTo(cardX + cardW - bPad, cardY + cardH - bPad);
+                    ctx.lineTo(cardX + cardW - bPad, cardY + cardH - bPad - bLen);
+                    ctx.stroke();
+
+                    // 7. Draw the QR Matrix in Center
+                    const qrSize = 510;
+                    const qrX = (W - qrSize) / 2;
+                    const qrY = cardY + 55;
+
+                    let painted = false;
+                    try {
+                        const tempDiv = document.createElement("div");
+                        new QRCode(tempDiv, {
+                            text: currentQrText || getSelectedQrPayload(),
+                            width: qrSize,
+                            height: qrSize,
+                            colorDark: "#000000",
+                            colorLight: "#ffffff",
+                            correctLevel: QRCode.CorrectLevel.L
+                        });
+                        const directCanvas = tempDiv.querySelector("canvas");
+                        if (directCanvas) {
+                            ctx.drawImage(directCanvas, qrX, qrY, qrSize, qrSize);
+                            painted = true;
+                        }
+                    } catch (e) {
+                        console.warn("Direct QR standee render fallback:", e);
+                    }
+
+                    if (!painted) {
+                        const qrImg = qrContainer.querySelector("img");
+                        const qrCanvasEl = qrContainer.querySelector("canvas");
+                        const qrSource = (qrImg && qrImg.complete && qrImg.naturalWidth > 0) ? qrImg : qrCanvasEl;
+                        if (qrSource) {
+                            ctx.drawImage(qrSource, qrX, qrY, qrSize, qrSize);
+                        }
+                    }
+
+                    // Card Caption below QR
+                    ctx.fillStyle = "#5a6f69";
+                    ctx.font = "600 23px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("📷 Scan with any phone camera or Google Lens", W / 2, cardY + cardH - 35);
+
+                    // 8. Vehicle Number Plate (Indian Style Pill)
+                    const plateW = 540;
+                    const plateH = 88;
+                    const plateX = (W - plateW) / 2;
+                    const plateY = 1045;
+
+                    // Plate Outer Box
+                    ctx.fillStyle = "#ffffff";
+                    roundRect(plateX, plateY, plateW, plateH, 12, true, true, "#0f172a", 4);
+
+                    // Blue IND Strip
+                    const indStripW = 76;
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(plateX + 12, plateY);
+                    ctx.lineTo(plateX + indStripW, plateY);
+                    ctx.lineTo(plateX + indStripW, plateY + plateH);
+                    ctx.lineTo(plateX + 12, plateY + plateH);
+                    ctx.quadraticCurveTo(plateX, plateY + plateH, plateX, plateY + plateH - 12);
+                    ctx.lineTo(plateX, plateY + 12);
+                    ctx.quadraticCurveTo(plateX, plateY, plateX + 12, plateY);
+                    ctx.closePath();
+                    ctx.fillStyle = "#003399";
+                    ctx.fill();
+                    ctx.restore();
+
+                    // Flag & IND Text
+                    ctx.fillStyle = "#ffffff";
+                    ctx.font = "24px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("🇮🇳", plateX + indStripW / 2, plateY + 38);
+                    ctx.font = "900 22px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.fillText("IND", plateX + indStripW / 2, plateY + 68);
+
+                    // Registration Number Text
+                    ctx.fillStyle = "#0f172a";
+                    ctx.font = "900 48px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+                    ctx.textAlign = "center";
+                    const regText = (vehicleData.vehicleNumber || "VEHICLE").toUpperCase();
+                    ctx.fillText(regText, plateX + indStripW + (plateW - indStripW) / 2, plateY + 62);
+
+                    let nextY = plateY + plateH + 34;
+
+                    // Vehicle Make & Model
+                    if (toggleModel.checked && vehicleData.vehicleModel) {
+                        ctx.fillStyle = "#38524b";
+                        ctx.font = "600 26px -apple-system, BlinkMacSystemFont, sans-serif";
+                        ctx.textAlign = "center";
+                        const modelDesc = [vehicleData.vehicleModel, vehicleData.vehicleColor, vehicleData.vehicleType].filter(Boolean).join(" · ");
+                        ctx.fillText(modelDesc, W / 2, nextY);
+                        nextY += 40;
+                    }
+
+                    // Contact Pills
+                    if (togglePhone.checked && vehicleData.ownerPhone) {
+                        const phoneText = "📞 Owner: " + vehicleData.ownerPhone;
+                        ctx.font = "700 24px -apple-system, BlinkMacSystemFont, sans-serif";
+                        const pMetrics = ctx.measureText(phoneText);
+                        const pW = pMetrics.width + 36;
+                        ctx.fillStyle = "#eef5f2";
+                        roundRect((W - pW) / 2, nextY - 24, pW, 38, 8, true, false);
+                        ctx.fillStyle = "#113830";
+                        ctx.textAlign = "center";
+                        ctx.fillText(phoneText, W / 2, nextY + 4);
+                        nextY += 48;
+                    }
+
+                    if (toggleContacts.checked && vehicleData.contacts && vehicleData.contacts.length > 0) {
+                        const displayContacts = vehicleData.contacts.slice(0, 2);
+                        displayContacts.forEach((contact, idx) => {
+                            const cPrefix = displayContacts.length > 1 ? `🚨 ICE ${idx + 1}: ` : "🚨 ICE: ";
+                            const iceText = cPrefix + (contact.name || "Emergency Contact") + " (" + contact.phone + ")";
+                            ctx.font = "700 22px -apple-system, BlinkMacSystemFont, sans-serif";
+                            const iceMetrics = ctx.measureText(iceText);
+                            const iceW = Math.min(iceMetrics.width + 36, W - 120);
+                            ctx.fillStyle = "#fef2f2";
+                            roundRect((W - iceW) / 2, nextY - 24, iceW, 38, 8, true, false);
+                            ctx.fillStyle = "#991b1b";
+                            ctx.textAlign = "center";
+                            ctx.fillText(iceText, W / 2, nextY + 4);
+                            nextY += 46;
+                        });
+                    }
+
+                    // 9. Bottom Camera Compatibility Box
+                    const compatY = 1350;
+                    const compatW = W - 200;
+                    const compatH = 180;
+                    const compatX = 100;
+
+                    ctx.fillStyle = theme.compatBg;
+                    roundRect(compatX, compatY, compatW, compatH, 18, true, true, theme.compatBorder, 2);
+
+                    ctx.fillStyle = theme.accent;
+                    ctx.font = "800 22px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.textAlign = "center";
+                    ctx.fillText("WORKS WITH ANY CAMERA • NO APP DOWNLOAD NEEDED", W / 2, compatY + 42);
+
+                    // 4 Badges in a row
+                    const badges = ["🔍 Google Lens", "🍏 iPhone Camera", "🤖 Android Camera", "💬 WhatsApp"];
+                    const bStep = compatW / 4;
+                    ctx.font = "700 22px -apple-system, BlinkMacSystemFont, sans-serif";
+
+                    badges.forEach((bText, idx) => {
+                        const bX = compatX + bStep * idx + bStep / 2;
+                        const bMetrics = ctx.measureText(bText);
+                        const pillW = bMetrics.width + 24;
+                        ctx.fillStyle = "#ffffff";
+                        roundRect(bX - pillW / 2, compatY + 66, pillW, 38, 19, true, true, "#c6dcd5", 1.5);
+                        ctx.fillStyle = "#153d34";
+                        ctx.fillText(bText, bX, compatY + 93);
+                    });
+
+                    ctx.fillStyle = "#5c736d";
+                    ctx.font = "500 21px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.fillText("Point phone camera at QR to view emergency info and call owner instantly", W / 2, compatY + 145);
+
+                    // 10. Cut Guide & Watermark Footer
+                    ctx.fillStyle = "#6b7f79";
+                    ctx.font = "500 20px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.fillText("✂ Cut along outer border and place on vehicle windshield, dashboard, or visor", W / 2, 1600);
+
+                    ctx.fillStyle = "#96aba5";
+                    ctx.font = "700 18px -apple-system, BlinkMacSystemFont, sans-serif";
+                    ctx.fillText("RESQTAG VEHICLE EMERGENCY SYSTEM • RESQTAG.APP", W / 2, 1640);
+
+                    // Complete!
+                    callback(canvas);
+                }
+
+                if (logoImg.complete && logoImg.naturalWidth > 0) {
+                    continueDrawing();
+                } else {
+                    logoImg.onload = continueDrawing;
+                    logoImg.onerror = continueDrawing;
+                }
+            }
+
+            // -----------------------------------------------------------------
+            // DOWNLOAD HANDLERS (JPG, PDF, PNG)
+            // -----------------------------------------------------------------
+            function getCleanFileName(ext) {
+                const reg = (vehicleData?.vehicleNumber || "tag").replace(/[^a-z0-9]/gi, "-").toLowerCase();
+                return "resqtag-" + reg + "-card." + ext;
+            }
+
+            // Download JPG
+            function handleDownloadJpg() {
+                if (!vehicleData) return;
+                qrStatus.textContent = "Rendering high-res card JPG layout...";
+
+                createStandeeCanvas((canvas) => {
+                    canvas.toBlob((blob) => {
+                        if (!blob) return;
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = getCleanFileName("jpg");
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                        URL.revokeObjectURL(url);
+                        qrStatus.textContent = "✓ High-resolution card JPG downloaded!";
+                    }, "image/jpeg", 0.95);
+                });
+            }
+
+            // Download PNG
+            function handleDownloadPng() {
+                if (!vehicleData) return;
+                qrStatus.textContent = "Rendering high-res PNG layout...";
+
+                createStandeeCanvas((canvas) => {
+                    canvas.toBlob((blob) => {
+                        if (!blob) return;
+                        const url = URL.createObjectURL(blob);
+                        const link = document.createElement("a");
+                        link.href = url;
+                        link.download = getCleanFileName("png");
+                        document.body.appendChild(link);
+                        link.click();
+                        link.remove();
+                        URL.revokeObjectURL(url);
+                        qrStatus.textContent = "✓ High-resolution PNG layout downloaded!";
+                    }, "image/png");
+                });
+            }
+
+            // Download PDF
+            function handleDownloadPdf() {
+                if (!vehicleData) return;
+                qrStatus.textContent = "Generating print-ready PDF...";
+
+                createStandeeCanvas((canvas) => {
+                    try {
+                        const jsPDFClass = window.jspdf ? window.jspdf.jsPDF : null;
+
+                        if (jsPDFClass) {
+                            const pdf = new jsPDFClass({
+                                orientation: "portrait",
+                                unit: "mm",
+                                format: "a4"
+                            });
+
+                            // A4 page: 210 x 297 mm
+                            // Centered standee card: width 120mm, proportional height ~172mm
+                            const pdfWidth = 120;
+                            const pdfHeight = (canvas.height / canvas.width) * pdfWidth; // ~172mm
+                            const x = (210 - pdfWidth) / 2; // centered
+                            const y = 30; // 30mm margin top
+
+                            const imgData = canvas.toDataURL("image/jpeg", 0.95);
+                            pdf.addImage(imgData, "JPEG", x, y, pdfWidth, pdfHeight);
+
+                            // Corner cut alignment marks
+                            pdf.setDrawColor(180, 180, 180);
+                            pdf.setLineDashPattern([2, 2], 0);
+                            pdf.line(x - 5, y, x + pdfWidth + 5, y);
+                            pdf.line(x - 5, y + pdfHeight, x + pdfWidth + 5, y + pdfHeight);
+
+                            pdf.save(getCleanFileName("pdf"));
+                            qrStatus.textContent = "✓ Print-ready PDF downloaded!";
+                        } else {
+                            window.print();
+                            qrStatus.textContent = "Use 'Save as PDF' in the print dialog.";
+                        }
+                    } catch (e) {
+                        window.print();
+                        qrStatus.textContent = "Use 'Save as PDF' in the print dialog.";
+                    }
+                });
+            }
+
+            // Browser Print
+            function handlePrint() {
+                if (!vehicleData) {
+                    alert("Please save your vehicle details or click 'Load demo vehicle' first.");
+                    return;
+                }
+                window.print();
+            }
+
+            // Load sample profile
+            function loadSampleProfile() {
+                const sample = {
+                    ownerName: "John Doe",
+                    ownerPhone: "+91 98765 43210",
+                    vehicleNumber: "TS 09 AB 1234",
+                    vehicleModel: "Maruti Suzuki WagonR",
+                    vehicleType: "Car",
+                    vehicleColor: "White",
+                    contacts: [
+                        { name: "Jane Doe (Spouse)", phone: "+91 98765 01234" },
+                        { name: "Robert Smith (Brother)", phone: "+91 98765 99999" }
+                    ]
+                };
+
+                try {
+                    localStorage.setItem("resqtagVehicle", JSON.stringify(sample));
+                } catch {}
+
+                showProfile();
+            }
+
+            // Event Listeners for QR Format
+            radioText.addEventListener("change", () => {
+                formatCardText.classList.add("is-active");
+                formatCardWeb.classList.remove("is-active");
+                formatCardVcard.classList.remove("is-active");
+                webUrlBox.style.display = "none";
+                generateQr();
+            });
+
+            radioWeb.addEventListener("change", () => {
+                formatCardWeb.classList.add("is-active");
+                formatCardText.classList.remove("is-active");
+                formatCardVcard.classList.remove("is-active");
+                webUrlBox.style.display = "block";
+                generateQr();
+            });
+
+            radioVcard.addEventListener("change", () => {
+                formatCardVcard.classList.add("is-active");
+                formatCardText.classList.remove("is-active");
+                formatCardWeb.classList.remove("is-active");
+                webUrlBox.style.display = "none";
+                generateQr();
+            });
+
+            customWebBase.addEventListener("input", () => {
+                if (radioWeb.checked) generateQr();
+            });
+
+            themeEmeraldBtn.addEventListener("click", () => setTheme("emerald"));
+            themePurpleBtn.addEventListener("click", () => setTheme("purple"));
+            themeAmberBtn.addEventListener("click", () => setTheme("amber"));
+
+            toggleContacts.addEventListener("change", updateContentVisibility);
+            togglePhone.addEventListener("change", updateContentVisibility);
+            toggleModel.addEventListener("change", updateContentVisibility);
+
+            downloadJpgBtn.addEventListener("click", handleDownloadJpg);
+            downloadPdfBtn.addEventListener("click", handleDownloadPdf);
+            downloadPngBtn.addEventListener("click", handleDownloadPng);
+            printButton.addEventListener("click", handlePrint);
+
+            if (loadSampleBtn) {
+                loadSampleBtn.addEventListener("click", loadSampleProfile);
+            }
+
+            document.getElementById("currentYear").textContent = new Date().getFullYear();
+
+            // Initialize
+            showProfile();
+        })();
+    </script>
+</body>
+</html>

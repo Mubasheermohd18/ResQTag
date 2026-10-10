@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#102b27">
+    <meta name="description" content="Scan a ResQTag vehicle QR code to access emergency contact information.">
+    <title>Scan a QR Code | ResQTag</title>
+
+    <link rel="icon" href="../assets/svg/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/pages.css">
+    <script>
+        if (!window.location.search.includes("standalone=true")) {
+            var hash = window.location.hash || "";
+            window.location.replace("index.html#qr-lookup" + (hash ? ("&" + hash.replace(/^#/, "")) : ""));
+        }
+    </script>
+
+    <style>
+        .lookup-page {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 44px 20px 64px;
+        }
+
+        .lookup-heading {
+            max-width: 680px;
+            margin-bottom: 30px;
+        }
+
+        .lookup-heading h1 {
+            margin: 8px 0 12px;
+        }
+
+        .lookup-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(280px, .9fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .lookup-panel {
+            padding: 26px;
+            background: #fff;
+            border: 1px solid #e1e7e5;
+            border-radius: 18px;
+        }
+
+        .lookup-panel h2 {
+            margin: 0 0 10px;
+            font-size: 1.25rem;
+        }
+
+        .lookup-panel p {
+            color: #65736f;
+            line-height: 1.65;
+        }
+
+        .camera-box {
+            width: 100%;
+            min-height: 260px;
+            overflow: hidden;
+            border-radius: 14px;
+            background: #102b27;
+            display: grid;
+            place-items: center;
+            position: relative;
+        }
+
+        #reader {
+            width: 100%;
+        }
+
+        #reader video {
+            width: 100% !important;
+            height: auto !important;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        #reader img {
+            max-width: 100%;
+        }
+
+        #reader__scan_region {
+            min-height: 220px;
+        }
+
+        #reader__dashboard {
+            padding: 12px !important;
+            color: #fff;
+        }
+
+        #reader__dashboard button,
+        #reader__dashboard select {
+            margin: 5px;
+            padding: 9px 12px;
+            border: 0;
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        #reader__dashboard button {
+            cursor: pointer;
+            background: #d9eee7;
+            color: #102b27;
+        }
+
+        #reader__dashboard select {
+            max-width: 100%;
+        }
+
+        #reader__status_span {
+            color: #fff !important;
+        }
+
+        .camera-placeholder {
+            color: #fff;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .camera-placeholder .camera-icon {
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+        }
+
+        .lookup-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 18px;
+        }
+
+        .lookup-actions button {
+            flex: 1;
+        }
+
+        .upload-area {
+            margin-top: 22px;
+            padding: 20px;
+            border: 1px dashed #cbd6d2;
+            border-radius: 12px;
+            background: #f8faf9;
+        }
+
+        .upload-area label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .upload-area input {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .lookup-status {
+            min-height: 24px;
+            margin-top: 14px;
+            font-size: .9rem;
+            color: #176b5b;
+            overflow-wrap: anywhere;
+        }
+
+        .lookup-error {
+            color: #b42318;
+        }
+
+        .privacy-note {
+            margin-top: 22px;
+            padding: 14px;
+            border-radius: 10px;
+            background: #fff6e5;
+            border: 1px solid #f2dfb4;
+            color: #79551b;
+            font-size: .85rem;
+            line-height: 1.6;
+        }
+
+        .lookup-steps {
+            display: grid;
+            gap: 18px;
+            margin-top: 22px;
+        }
+
+        .lookup-step {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .lookup-step-number {
+            flex: 0 0 34px;
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: #e9f4ef;
+            color: #176b5b;
+            font-weight: 800;
+        }
+
+        .lookup-step strong {
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .lookup-step p {
+            margin: 0;
+            font-size: .9rem;
+        }
+
+        @media (max-width: 720px) {
+            .lookup-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .lookup-page {
+                padding-top: 28px;
+            }
+
+            .lookup-panel {
+                padding: 20px;
+            }
+
+            .camera-box {
+                min-height: 220px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="site-header">
+        <nav class="navbar container" aria-label="Main navigation">
+            <a class="brand" href="index.html">
+                <img src="../assets/svg/logo.svg" alt="" width="38" height="38">
+                <span>ResQTag</span>
+            </a>
+
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="printable-qr.html">Print QR</a>
+            </div>
+
+            <a class="button button-secondary nav-cta" href="dashboard.html">
+                Create a tag
+            </a>
+        </nav>
+    </header>
+
+    <main class="lookup-page">
+        <section class="lookup-heading">
+            <span class="eyebrow">RESQTAG QR SCANNER</span>
+            <h1>Scan the vehicle's QR code</h1>
+            <p class="muted">
+                Scan the tag attached to a vehicle to open its emergency
+                information page and find the available contact options.
+            </p>
+        </section>
+
+        <section class="lookup-layout">
+            <div class="lookup-panel">
+                <h2>QR code scanner</h2>
+                <p>
+                    Allow camera access when prompted, or upload a photo of
+                    the QR code if you cannot use the camera.
+                </p>
+
+                <div class="camera-box">
+                    <div id="reader">
+                        <div class="camera-placeholder" id="cameraPlaceholder">
+                            <div class="camera-icon" aria-hidden="true">▦</div>
+                            <strong>Camera scanner</strong>
+                            <p style="color:#d5e4df;">
+                                Start the scanner to read a ResQTag.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lookup-actions">
+                    <button class="button button-primary" type="button" id="startScan">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                        Start camera
+                    </button>
+
+                    <button class="button button-secondary" type="button" id="stopScan" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+                        Stop camera
+                    </button>
+                </div>
+
+                <div class="upload-area">
+                    <label for="qrImage">Scan from an image</label>
+                    <input
+                        type="file"
+                        id="qrImage"
+                        accept="image/*"
+                    >
+                    <p class="muted" style="font-size:.85rem;margin-bottom:0;">
+                        Choose a clear photo or screenshot containing the QR code.
+                    </p>
+                </div>
+
+                <p id="scanStatus" class="lookup-status" role="status" aria-live="polite">
+                    Scanner is ready.
+                </p>
+            </div>
+
+            <aside class="lookup-panel">
+                <h2>What happens after scanning?</h2>
+                <p>
+                    A valid ResQTag QR code opens the emergency page associated
+                    with the tag.
+                </p>
+
+                <div class="lookup-steps">
+                    <div class="lookup-step">
+                        <span class="lookup-step-number">1</span>
+                        <div>
+                            <strong>Scan the code</strong>
+                            <p>Point the camera at the QR code on the vehicle.</p>
+                        </div>
+                    </div>
+
+                    <div class="lookup-step">
+                        <span class="lookup-step-number">2</span>
+                        <div>
+                            <strong>Review the information</strong>
+                            <p>Check the vehicle details and listed emergency contacts.</p>
+                        </div>
+                    </div>
+
+                    <div class="lookup-step">
+                        <span class="lookup-step-number">3</span>
+                        <div>
+                            <strong>Contact someone</strong>
+                            <p>Use the available call or messaging options if assistance is needed.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="privacy-note">
+                    <strong>For emergencies:</strong> If a person is seriously
+                    injured or in immediate danger, contact local emergency
+                    services directly. Do not rely solely on a QR code.
+                </div>
+            </aside>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <a class="brand footer-brand" href="index.html">
+                <img src="../assets/svg/logo.svg" alt="" width="32" height="32">
+                <span>ResQTag</span>
+            </a>
+
+            <p class="copyright">
+                © <span id="currentYear"></span> ResQTag
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="../assets/js/storage.js"></script>
+    <script src="../assets/js/qr-scanner.js"></script>
+    <script src="../assets/js/main.js"></script>
+
+    <script>
+        (() => {
+            const readerId = "reader";
+            const status = document.getElementById("scanStatus");
+            const startButton = document.getElementById("startScan");
+            const stopButton = document.getElementById("stopScan");
+            const imageInput = document.getElementById("qrImage");
+            const placeholder = document.getElementById("cameraPlaceholder");
+
+            let scanner = null;
+            let scanning = false;
+            let processingResult = false;
+
+            function setStatus(message, isError = false) {
+                status.textContent = message;
+                status.classList.toggle("lookup-error", isError);
+            }
+
+            function openScannedResult(decodedText) {
+                if (processingResult) return;
+                processingResult = true;
+
+                // 1. Check if scanned content is Instant Emergency Plain Text
+                if (decodedText && typeof decodedText === "string" && (decodedText.includes("RESQTAG") || decodedText.includes("EMERGENCY"))) {
+                    const textProfile = typeof parseEmergencyTextToProfile === "function" ? parseEmergencyTextToProfile(decodedText) : null;
+                    if (textProfile && (textProfile.vehicleNumber || textProfile.contacts.length > 0)) {
+                        setStatus("ResQTag Emergency Card found. Opening emergency details…");
+                        const reportUrl = typeof makeReportUrlFromProfile === "function"
+                            ? makeReportUrlFromProfile(textProfile)
+                            : "report.html#data=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(textProfile)))));
+                        window.location.href = reportUrl;
+                        return;
+                    }
+                }
+
+                // 2. Check if scanned content is a vCard Contact Card
+                if (decodedText && typeof decodedText === "string" && decodedText.includes("BEGIN:VCARD")) {
+                    const profile = typeof parseVCardToProfile === "function" ? parseVCardToProfile(decodedText) : null;
+                    if (profile && (profile.vehicleNumber || profile.contacts.length > 0)) {
+                        setStatus("ResQTag Contact Card found. Opening emergency details…");
+                        const reportUrl = typeof makeReportUrlFromProfile === "function"
+                            ? makeReportUrlFromProfile(profile)
+                            : "report.html#data=" + encodeURIComponent(btoa(unescape(encodeURIComponent(JSON.stringify(profile)))));
+                        window.location.href = reportUrl;
+                        return;
+                    }
+                }
+
+                // 3. Check if scanned content is a Web URL
+                try {
+                    const resultUrl = new URL(decodedText);
+
+                    if (!["http:", "https:", "file:"].includes(resultUrl.protocol)) {
+                        throw new Error("Unsupported QR destination.");
+                    }
+
+                    const allowedPage = /\/(report|emergency)\.html$/i.test(
+                        resultUrl.pathname
+                    );
+
+                    if (!allowedPage || !resultUrl.hash.includes("data=")) {
+                        processingResult = false;
+                        setStatus(
+                            "This QR code does not look like a supported ResQTag emergency code.",
+                            true
+                        );
+                        return;
+                    }
+
+                    setStatus("ResQTag found. Opening the emergency page…");
+                    window.location.href = resultUrl.href;
+                } catch (error) {
+                    processingResult = false;
+                    setStatus(
+                        "This QR code does not contain a valid ResQTag emergency link.",
+                        true
+                    );
+                }
+            }
+
+            async function stopCamera() {
+                if (scanner && scanning) {
+                    try {
+                        await scanner.stop();
+                    } catch (error) {
+                        // The camera may already be stopped.
+                    }
+                }
+
+                scanning = false;
+                startButton.disabled = false;
+                stopButton.disabled = true;
+                setStatus("Camera scanner stopped.");
+            }
+
+            async function startCamera() {
+                if (typeof Html5Qrcode === "undefined") {
+                    setStatus(
+                        "The QR scanner library could not load. Check your internet connection.",
+                        true
+                    );
+                    return;
+                }
+
+                startButton.disabled = true;
+                setStatus("Starting camera…");
+
+                try {
+                    if (!scanner) {
+                        scanner = new Html5Qrcode(readerId);
+                    }
+
+                    if (placeholder) {
+                        placeholder.style.display = "none";
+                    }
+
+                    await scanner.start(
+                        { facingMode: "environment" },
+                        {
+                            fps: 10,
+                            qrbox: { width: 230, height: 230 },
+                            aspectRatio: 1
+                        },
+                        decodedText => {
+                            openScannedResult(decodedText);
+                        },
+                        () => {}
+                    );
+
+                    scanning = true;
+                    stopButton.disabled = false;
+                    setStatus("Camera is active. Point it at the QR code.");
+                } catch (error) {
+                    startButton.disabled = false;
+                    stopButton.disabled = true;
+
+                    if (placeholder) {
+                        placeholder.style.display = "block";
+                    }
+
+                    setStatus(
+                        "Could not access the camera. Allow camera permission and use HTTPS or localhost.",
+                        true
+                    );
+                }
+            }
+
+            async function scanImage(file) {
+                if (!file) return;
+
+                if (typeof Html5Qrcode === "undefined") {
+                    setStatus("The QR scanner library could not load.", true);
+                    return;
+                }
+
+                if (scanning) {
+                    await stopCamera();
+                }
+
+                try {
+                    scanner = scanner || new Html5Qrcode(readerId);
+                    setStatus("Reading QR code from image…");
+
+                    const decodedText = await scanner.scanFile(file, true);
+                    openScannedResult(decodedText);
+                } catch (error) {
+                    setStatus(
+                        "No readable QR code was found. Try a clearer image.",
+                        true
+                    );
+                } finally {
+                    imageInput.value = "";
+                }
+            }
+
+            startButton.addEventListener("click", startCamera);
+            stopButton.addEventListener("click", stopCamera);
+            imageInput.addEventListener("change", event => {
+                scanImage(event.target.files[0]);
+            });
+
+            document.getElementById("currentYear").textContent =
+                new Date().getFullYear();
+        })();
+    </script>
+</body>
+</html>
