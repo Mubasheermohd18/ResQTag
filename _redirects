@@ -1,0 +1,7 @@
+# Netlify Redirects for ResQTag
+/               /frontend/index.html        301!
+/report         /frontend/index.html#report 301
+/dashboard      /frontend/index.html#dashboard 301
+/admin          /frontend/index.html#admin  301
+/printable-qr   /frontend/index.html#printable-qr 301
+/qr-lookup      /frontend/index.html#qr-lookup 301

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="0; url=frontend/index.html">
+    <title>ResQTag | Vehicle Emergency Access</title>
+    <link rel="icon" href="assets/svg/logo.svg" type="image/svg+xml">
+    <script>
+        // Forward query parameters and hash anchors seamlessly to single-tab application
+        (function() {
+            var search = window.location.search || "";
+            var hash = window.location.hash || "";
+            window.location.replace("frontend/index.html" + search + hash);
+        })();
+    </script>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #092823; color: #ffffff; text-align: center; padding: 20px; box-sizing: border-box;">
+    <div>
+        <h2 style="margin: 0 0 10px; font-weight: 700; letter-spacing: -0.02em;">Loading ResQTag...</h2>
+        <p style="margin: 0; color: #94a3b8; font-size: 0.95rem;">
+            Redirecting to <a href="frontend/index.html" style="color: #34d399; text-decoration: none; font-weight: 600;">ResQTag Vehicle Emergency Access</a>
+        </p>
+    </div>
+</body>
+</html>

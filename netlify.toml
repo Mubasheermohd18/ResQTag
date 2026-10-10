@@ -1,0 +1,55 @@
+# Netlify Configuration for ResQTag
+# ==================================
+# ResQTag is a high-performance static client application with no build step required.
+
+[build]
+  publish = "."
+  command = ""
+
+# Redirect root URL to the single-tab unified application
+[[redirects]]
+  from = "/"
+  to = "/frontend/index.html"
+  status = 301
+  force = true
+
+# Direct section deep links
+[[redirects]]
+  from = "/report"
+  to = "/frontend/index.html#report"
+  status = 301
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/frontend/index.html#dashboard"
+  status = 301
+
+[[redirects]]
+  from = "/admin"
+  to = "/frontend/index.html#admin"
+  status = 301
+
+[[redirects]]
+  from = "/printable-qr"
+  to = "/frontend/index.html#printable-qr"
+  status = 301
+
+[[redirects]]
+  from = "/qr-lookup"
+  to = "/frontend/index.html#qr-lookup"
+  status = 301
+
+# Security and Device Permission Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(self), geolocation=(self)"
+
+# Long-term Caching for static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
