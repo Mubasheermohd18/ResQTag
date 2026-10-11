@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+    <defs>
+        <linearGradient id="bgGrad" x1="15%" y1="10%" x2="85%" y2="90%">
+            <stop offset="0%" stop-color="#2dd4bf"/>
+            <stop offset="45%" stop-color="#147262"/>
+            <stop offset="100%" stop-color="#0a3830"/>
+        </linearGradient>
+        <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#198774"/>
+            <stop offset="100%" stop-color="#0c4339"/>
+        </linearGradient>
+    </defs>
+    <!-- Background Circle -->
+    <circle cx="50" cy="50" r="48" fill="url(#bgGrad)"/>
+    
+    <!-- Road curve -->
+    <path d="M12 44 Q 28 42, 34 56 Q 40 70, 52 88 L 10 92 Z" fill="#0b2c26" opacity="0.85"/>
+    <path d="M26 46 Q 32 58, 38 78" stroke="#ffffff" stroke-width="2" stroke-dasharray="4 3" stroke-linecap="round" opacity="0.9"/>
+
+    <!-- QR Code Graphic in top right -->
+    <g transform="translate(42, 14)">
+        <!-- Corner brackets -->
+        <path d="M-6 4 L-6 -2 L0 -2" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M38 -2 L44 -2 L44 4" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M-6 34 L-6 40 L0 40" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M44 34 L44 40 L38 40" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        
+        <!-- QR Plate Background -->
+        <rect x="0" y="0" width="38" height="38" rx="5" fill="#ffffff"/>
+        
+        <!-- QR modules -->
+        <!-- Top Left finder -->
+        <rect x="4" y="4" width="10" height="10" rx="1.5" fill="#0d463b"/>
+        <rect x="6" y="6" width="6" height="6" fill="#ffffff"/>
+        <rect x="7.5" y="7.5" width="3" height="3" fill="#0d463b"/>
+        
+        <!-- Top Right finder -->
+        <rect x="24" y="4" width="10" height="10" rx="1.5" fill="#0d463b"/>
+        <rect x="26" y="6" width="6" height="6" fill="#ffffff"/>
+        <rect x="27.5" y="7.5" width="3" height="3" fill="#0d463b"/>
+        
+        <!-- Bottom Left finder -->
+        <rect x="4" y="24" width="10" height="10" rx="1.5" fill="#0d463b"/>
+        <rect x="6" y="26" width="6" height="6" fill="#ffffff"/>
+        <rect x="7.5" y="27.5" width="3" height="3" fill="#0d463b"/>
+        
+        <!-- Center data dots -->
+        <rect x="17" y="5" width="4" height="4" fill="#0d463b"/>
+        <rect x="16" y="12" width="6" height="3" fill="#0d463b"/>
+        <rect x="17" y="18" width="4" height="4" fill="#0d463b"/>
+        <rect x="24" y="17" width="5" height="4" fill="#0d463b"/>
+        <rect x="31" y="17" width="3" height="5" fill="#0d463b"/>
+        <rect x="16" y="25" width="4" height="8" fill="#0d463b"/>
+        <rect x="23" y="24" width="5" height="4" fill="#0d463b"/>
+        <rect x="29" y="29" width="5" height="5" fill="#0d463b"/>
+    </g>
+
+    <!-- Shield with Medical Cross in center-right -->
+    <g transform="translate(62, 54)">
+        <path d="M0 0 L 26 0 C 26 18, 13 28, 0 34 C -13 28, -26 18, -26 0 Z" fill="url(#shieldGrad)" stroke="#2dd4bf" stroke-width="2"/>
+        <!-- Cross -->
+        <path d="M-4 -8 H 4 V -1 H 11 V 7 H 4 V 14 H -4 V 7 H -11 V -1 H -4 Z" fill="#ffffff"/>
+    </g>
+
+    <!-- Sleek Car Silhouette at bottom left -->
+    <g transform="translate(14, 62)">
+        <!-- Car body -->
+        <path d="M 6 24 C 6 20, 10 16, 15 15 L 20 8 C 22 5, 26 4, 33 4 C 40 4, 44 5, 46 8 L 51 15 C 56 16, 60 20, 60 24 L 62 26 C 62 28, 59 30, 56 30 L 10 30 C 7 30, 4 28, 4 26 Z" fill="#07221d" stroke="#2dd4bf" stroke-width="1.8"/>
+        <!-- Windshield -->
+        <path d="M 21 14 L 24 8 C 26 6, 40 6, 42 8 L 45 14 Z" fill="#2dd4bf" opacity="0.65"/>
+        <!-- Headlights -->
+        <ellipse cx="14" cy="22" rx="3.5" ry="1.8" fill="#e6fffa"/>
+        <ellipse cx="52" cy="22" rx="3.5" ry="1.8" fill="#e6fffa"/>
+        <!-- Grill -->
+        <path d="M 27 24 Q 33 26 39 24" stroke="#2dd4bf" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+</svg>
